@@ -57,7 +57,7 @@
       top: 50%;
       transform: translate(-50%, -50%);
       width: min(1100px, 92cqw, 210cqh);
-      aspect-ratio: 648 / 216;
+      aspect-ratio: 780 / 216;
       pointer-events: none;
       user-select: none;
     }
@@ -65,15 +65,23 @@
       position: absolute;
       left: 0;
       top: 0;
-      width: 23.765432%;
+      width: 19.743590%;
+      height: auto;
+      display: block;
+    }
+    .hero__it {
+      position: absolute;
+      left: 18.589744%;
+      top: 0;
+      width: 17.948718%;
       height: auto;
       display: block;
     }
     .hero__wordmark {
       position: absolute;
-      left: 27.469136%;
+      left: 39.743590%;
       top: 3.703704%;
-      width: 72.530864%;
+      width: 60.256410%;
       height: auto;
       display: block;
     }
@@ -108,13 +116,14 @@
 </head>
 <body>
   <header class="site-header">
-    <a class="site-logo" href="./" aria-label="Bit Clever home"><img src="./assets/bit-clever-logo-black.svg" width="648" height="216" alt="Bit Clever" draggable="false"></a>
+    <a class="site-logo" href="./" aria-label="Bit Clever home"><img src="./assets/bit-clever-logo-black.svg" width="780" height="216" alt="Bit Clever" draggable="false"></a>
     <button class="contact-cta" type="button">LET'S TALK <span aria-hidden="true">&rarr;</span></button>
   </header>
   <main class="hero" aria-label="Bit Clever">
     <canvas class="hero__background" aria-hidden="true"></canvas>
-    <div class="hero__brand" role="img" aria-label="Bit Clever: a white B character beside the Clever script wordmark, both with black eyes">
+    <div class="hero__brand" role="img" aria-label="Bit Clever: a white B character, coding-style it with a square dot, and the Clever script">
       <img class="hero__character" src="./assets/bit-clever-character.svg" width="154" height="216" alt="" draggable="false">
+      <img class="hero__it" src="./assets/bit-it.svg" width="140" height="216" alt="" draggable="false">
       <img class="hero__wordmark" src="./assets/clever-wordmark.svg" width="1264" height="478" alt="" draggable="false">
     </div>
   </main>
