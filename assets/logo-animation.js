@@ -13,12 +13,12 @@ if (logo) {
   canvas.setAttribute('aria-hidden', 'true');
   canvas.hidden = true;
   replay.append(canvas);
-  let intro, wall = 0, variation = 'soft';
-  try { const saved = localStorage.getItem('bit-clever-intro'); if (saved in bitVariations) variation = saved; } catch {}
+  let intro, wall = 0, variation = 'reboundGlance';
+  try { const saved = localStorage.getItem('bit-clever-intro-v2'); if (saved in bitVariations) variation = saved; } catch {}
   const introSelect = document.querySelector('#bit-style');
   for (const [value, item] of Object.entries(bitVariations)) { const option = document.createElement('option'); option.value = value; option.textContent = item.name; introSelect.append(option); }
   introSelect.value = variation;
-  introSelect.addEventListener('change', () => { variation = introSelect.value; try { localStorage.setItem('bit-clever-intro', variation); } catch {} play(); });
+  introSelect.addEventListener('change', () => { variation = introSelect.value; try { localStorage.setItem('bit-clever-intro-v2', variation); } catch {} play(); });
   let paint, data, request = 0, started = 0, elapsed = 0;
   const speeds = [1, 1.5, 2, 2.5, 3, 4];
   const storageKey = 'bit-clever-handwriting-speed-v2';

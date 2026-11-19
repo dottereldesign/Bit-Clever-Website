@@ -110,7 +110,7 @@ The eye dropdown offers Cute bump, One then the other, Wake-up blink, Float up, 
 
 “Coming soon” sits below the hero logo and enters after the C eyes finish. Its six entrance presets are Gentle rise, Quiet fade, Focus in (default), Soft bounce, Typewriter, and Letter cascade. Selection replays the full sequence and is remembered. Reduced motion shows the message immediately.
 
-The Bit entrance offers Soft landing (default), Little rebound, Side glance, and
+The Bit entrance offers Rebound + glance (default), Soft landing, Little rebound, Side glance, and
 Feather drop. B lands beside C before the unchanged handwriting begins. After
-Clever and its eyes finish, B slides left to uncover the clipped “it”. Coming
+Clever and its eyes finish, B slides left to uncover “it” beneath a mask matching B’s exact silhouette. Coming
 soon follows the reveal. Reduced motion shows the complete static logo.
