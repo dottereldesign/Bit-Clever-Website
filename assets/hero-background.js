@@ -1,5 +1,12 @@
 import { HERO_FIELD as field } from './hero-field.js';
 
+let defaults = {preset: 0, strength: 1, size: 1, revision: 'initial'};
+try {
+  const response = await fetch(new URL('./noise-defaults.json', import.meta.url), {cache: 'no-store'});
+  if (response.ok) defaults = await response.json();
+} catch {}
+const isLocal = ['127.0.0.1', 'localhost'].includes(location.hostname);
+
 const canvas = document.querySelector('.hero__background');
 const context = canvas?.getContext('2d', { alpha: false });
 
@@ -62,29 +69,26 @@ function render() {
   const noiseSize = grain.size;
   const stretchX = width / w;
   const stretchY = height / h;
-  // Keep the reference artboard proportional. Smaller viewports reveal a
-  // centered crop; larger viewports scale it uniformly, never stretch it.
-  const artScale = Math.max(1, width / 795, height / 648);
-  const artWidth = 795 * artScale;
-  const artHeight = 648 * artScale;
-  const cropX = (artWidth - width) / 2;
-  const cropY = (artHeight - height) / 2;
+  // Anchor the colour regions to the hero, but measure both axes in the
+  // same physical units so the gradient shapes never become skinny.
+  const referenceWidth = height * 795 / 648;
   const xValues = new Float64Array(w);
   const glowXValues = new Float64Array(w);
   const noiseX = new Uint16Array(w);
   const noiseMixX = new Float32Array(w);
 
   for (let x = 0; x < w; x++) {
-    const u = (x * stretchX + cropX) / (artWidth - artScale);
+    const px = x * stretchX;
+    const u = (px - width * fade.x) / referenceWidth + fade.x;
     xValues[x] = ((u - fade.x) * fade.aspect) ** 2;
-    glowXValues[x] = ((u - glow.x) / glow.radiusX) ** 2;
+    glowXValues[x] = ((px - width - (glow.x - 1) * referenceWidth) / (referenceWidth * glow.radiusX)) ** 2;
     const nx = x * stretchX / grainSize;
     noiseX[x] = Math.floor(nx) % noiseSize;
     noiseMixX[x] = nx - Math.floor(nx);
   }
 
   for (let y = 0; y < h; y++) {
-    const v = (y * stretchY + cropY) / (artHeight - artScale);
+    const v = y * stretchY / height;
     const fadeY = (v - fade.y) ** 2;
     const glowY = ((v - glow.y) / glow.radiusY) ** 2;
     const ny = y * stretchY / grainSize;
@@ -132,16 +136,14 @@ if (context) {
   const picker = document.querySelector('.noise-picker');
   const options = picker.querySelector('.noise-presets');
   const name = document.querySelector('#noise-name');
-  try {
-    const saved = Number(localStorage.getItem('hero-noise-variation'));
-    if (Number.isInteger(saved) && saved >= 0 && saved < variations.length) selected = saved;
-  } catch {}
-
-  strength = variations[selected].strength;
-  grainSize = variations[selected].size;
+  selected = defaults.preset;
+  strength = defaults.strength;
+  grainSize = defaults.size;
   try {
     const saved = JSON.parse(localStorage.getItem('hero-noise-tuning'));
-    if (saved && saved.preset === selected) {
+    if (saved && (isLocal || saved.revision === defaults.revision) &&
+        Number.isInteger(saved.preset) && saved.preset >= 0 && saved.preset < variations.length) {
+      selected = saved.preset;
       if (Number.isFinite(saved.strength)) strength = Math.max(0, Math.min(4, saved.strength));
       if (Number.isFinite(saved.size)) grainSize = Math.max(.25, Math.min(4, saved.size));
     }
@@ -157,7 +159,7 @@ if (context) {
     name.textContent = variations[selected].name + (modified ? ' (custom)' : '');
   };
   const saveTuning = () => {
-    try { localStorage.setItem('hero-noise-tuning', JSON.stringify({preset: selected, strength, size: grainSize})); } catch {}
+    try { localStorage.setItem('hero-noise-tuning', JSON.stringify({preset: selected, strength, size: grainSize, revision: defaults.revision})); } catch {}
   };
   [strengthInput, sizeInput].forEach(input => input.addEventListener('input', () => {
     strength = Number(strengthInput.value);
@@ -183,6 +185,25 @@ if (context) {
     });
     options.append(button);
     return button;
+  });
+  const saveButton = document.querySelector('#save-noise-default');
+  const saveStatus = document.querySelector('#save-noise-status');
+  saveButton.hidden = !isLocal;
+  saveButton.addEventListener('click', async () => {
+    saveButton.disabled = true;
+    saveStatus.textContent = 'Saving...';
+    try {
+      const response = await fetch('/__preview/noise-defaults', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({preset: selected, strength, size: grainSize}),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Save failed');
+      defaults = result;
+      saveTuning();
+      saveStatus.textContent = 'Saved to site files. Push to publish these defaults.';
+    } catch (error) { saveStatus.textContent = 'Could not save: ' + error.message; }
+    finally { saveButton.disabled = false; }
   });
   syncControls();
   picker.hidden = false;

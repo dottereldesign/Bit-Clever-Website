@@ -30,16 +30,16 @@
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      width: max(100cqw, 122.685185cqh, 795px);
-      aspect-ratio: 795 / 648;
+      width: 100%;
+      height: 100%;
       /* The same palette remains visible before the precise canvas is ready. */
       background:
-        radial-gradient(ellipse 29.559% 27.6292% at 113.6491% 33.5515%,
+        radial-gradient(ellipse 36.265cqh 27.6292cqh at calc(100% + 16.745cqh) 33.5515%,
           rgb(23 177 130 / .8532) 0%, rgb(23 177 130 / .848) 25%,
           rgb(23 177 130 / .788) 50%, rgb(23 177 130 / .602) 75%,
           rgb(23 177 130 / .314) 100%, rgb(23 177 130 / .089) 125%,
           rgb(23 177 130 / .011) 150%, rgb(23 177 130 / 0) 180%),
-        radial-gradient(ellipse 86.555% 96.4097% at 32.7591% 1.3574%,
+        radial-gradient(ellipse 106.189cqh 96.4097cqh at 32.7591% 1.3574%,
           #123433 50.632%, #99ace5 100%);
     }
     .hero__background {
@@ -70,6 +70,11 @@
     .contact-cta:hover { background: #333; }
     .site-header :focus-visible { outline: 2px solid #526ab4; outline-offset: 4px; }
     @media (max-width: 480px) { .site-header { padding: 0 8px; } .site-logo { font-size: 22px; } .contact-cta { gap: 16px; } }
+    #save-noise-default { margin-top: 8px; background: #99ace5; color: #123433; text-align: center; font-weight: 600; }
+    #save-noise-default[hidden] { display: none; }
+    #save-noise-default:disabled { opacity: .5; }
+    #save-noise-status { font-size: 12px; margin: 8px 0 0; }
+    #save-noise-status:empty { display: none; }
   </style>
   <script type="module" src="./assets/hero-background.js"></script>
 </head>
@@ -89,6 +94,8 @@
         <input id="noise-strength" type="range" min="0" max="4" step="0.05" value="1">
         <label for="noise-size">Size <output id="size-value" for="noise-size">1.00x</output></label>
         <input id="noise-size" type="range" min="0.25" max="4" step="0.05" value="1">
+        <button id="save-noise-default" type="button" hidden>Save as default</button>
+        <p id="save-noise-status" role="status"></p>
       </div>
       <div class="noise-presets" role="group" aria-label="Noise presets"></div>
     </div>

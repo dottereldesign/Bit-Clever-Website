@@ -19,13 +19,24 @@ are needed. GitHub Pages serves `main` directly.
 The background uses a measured petrol-to-periwinkle elliptical fade, a mint glow
 at the right edge, and deterministic monochrome grain. The grain is softened by a
 2Ã—2 filter and fades with the colour field. It stays the same size in CSS pixels
-across device resolutions. The canvas redraws only when its dimensions change;
+across device resolutions. The canvas redraws when dimensions or noise settings change;
 it has no animation loop. CSS gradients provide a fallback without JavaScript.
 
 `assets/hero-field.js` contains the colour and grain controls, and
-`assets/hero-background.js` renders them. The artwork uses a 795 x 648 reference artboard, uniformly scaled to cover the
-hero and center-cropped on smaller screens without stretching. A white header
+`assets/hero-background.js` renders them. The colour regions stay anchored to the hero: petrol at the top,
+mint on the right, periwinkle at the bottom. Both axes of each gradient use the
+same height-based scale, preserving its shape instead of stretching or cropping
+away the right glow. A white header
 contains a placeholder wordmark and contact button (destination to be added).
+
+## Shared noise defaults
+
+In the local preview, adjust a preset and its sliders, then click **Save as default**.
+This writes `assets/noise-defaults.json` in the checkout. Commit and push that file
+to `main` to publish the settings to GitHub Pages. Saving alone does not push Git.
+The button is local-only; the public static site cannot write repository files.
+Published default revisions override stale browser tuning, while local draft
+settings remain available for further adjustment.
 
 ## Reference calibration
 
