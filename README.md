@@ -44,7 +44,11 @@ The hero's Clever lettering writes on once per page load. Click or keyboard-acti
 the hero logo to replay it. Bit and the header logo stay static. Pen travel starts
 at the C's upper-right terminal, follows the C bowl into the l loop, then the e,
 v, second e, and r exit. The C eyes appear after the last stroke. The sequence
-takes 5.65 seconds; reduced-motion preferences show the completed logo immediately.
+takes about 2.8 seconds at the default 2× speed. The **Drawing** menu above the
+noise controls offers 1× (original), 1.5×, 2×, 2.5×, 3×, and 4×. Selecting one
+immediately replays the animation and remembers the choice in that browser.
+The stroke route and eye order stay the same at every speed. Reduced-motion
+preferences show the completed logo immediately.
 
 The painter follows a variable-width pen route derived from the approved SVG.
 Each loop has a continuous rising stroke, turn, descending stroke, and exit.

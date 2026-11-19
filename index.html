@@ -88,6 +88,16 @@
     .noise-options button[aria-pressed="true"] { background: #99ace540; }
     .noise-picker :focus-visible { outline: 2px solid #d5e0ff; outline-offset: 2px; }
 
+    .speed-picker { position: fixed; right: 8px; bottom: 64px; z-index: 11; font: 14px/1.4 Arial,sans-serif; color: #eef4ff; }
+    .speed-picker summary { cursor: pointer; padding: 12px 16px; border: 1px solid #ffffff40; border-radius: 12px; background: #123433ed; }
+    .speed-options { position: absolute; right: 0; bottom: calc(100% + 8px); width: 260px; max-width: calc(100vw - 16px); max-height: calc(100svh - 136px); overflow: auto; padding: 6px; border-radius: 14px; background: #123433f5; box-shadow: 0 10px 36px #001b1940; }
+    .speed-options p { margin: 6px 12px 10px; color: #c7d6ff; font-size: 12px; }
+    .speed-options button { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; min-height: 44px; padding: 9px 12px; border: 0; border-radius: 8px; text-align: left; font: inherit; color: inherit; background: transparent; cursor: pointer; }
+    .speed-options button:hover { background: #ffffff12; }
+    .speed-options button[aria-pressed="true"] { background: #99ace540; }
+    .speed-duration { color: #c7d6ff; font-variant-numeric: tabular-nums; }
+    .speed-picker :focus-visible { outline: 2px solid #d5e0ff; outline-offset: 2px; }
+
     .noise-tuning { padding: 10px 12px 14px; border-bottom: 1px solid #ffffff25; margin-bottom: 6px; }
     .noise-tuning label { display: flex; justify-content: space-between; margin-top: 8px; }
     .noise-tuning output { color: #c7d6ff; font-variant-numeric: tabular-nums; }
@@ -121,6 +131,13 @@
       <img class="hero__logo" src="./assets/bit-clever-logo-white.svg" width="456" height="130" alt="" draggable="false">
     </button>
   </main>
+  <details class="speed-picker" hidden>
+    <summary>Drawing: <span id="drawing-speed">2×</span></summary>
+    <div class="speed-options">
+      <p id="speed-help">Choose a speed to replay.</p>
+      <div class="speed-presets" role="group" aria-label="Drawing speed" aria-describedby="speed-help"></div>
+    </div>
+  </details>
   <details class="noise-picker" hidden>
     <summary>Noise: <span id="noise-name">Original</span></summary>
     <div class="noise-options">

@@ -14,13 +14,36 @@ const output = path.resolve(__dirname, '../.local/handwriting-audit');
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(base);
     await page.waitForFunction(() => document.querySelector('.hero__brand').dataset.handwriting === 'playing');
-    await page.waitForTimeout(2200);
+    await page.waitForTimeout(1100);
     await page.screenshot({ path: path.join(output, 'website-loop.png') });
     await page.waitForFunction(() => document.querySelector('.hero__brand').dataset.handwriting === 'complete');
     assert.equal(await page.locator('.hero__handwriting').isVisible(), false);
     assert.equal(await page.locator('.hero__logo').isVisible(), true);
     assert.equal(await page.locator('.hero__logo').getAttribute('src'), './assets/bit-clever-logo-white.svg');
     await page.screenshot({ path: path.join(output, 'website-finished.png') });
+
+    assert.equal(await page.locator('#drawing-speed').textContent(), '2×');
+    assert.equal(await page.locator('.speed-presets button').count(), 6);
+    for (const speed of [1, 1.5, 2, 2.5, 3, 4]) {
+      await page.locator('.speed-picker summary').click();
+      const started = Date.now();
+      await page.locator(`[data-speed="${speed}"]`).click();
+      assert.equal(await page.locator('.speed-picker').getAttribute('open'), null);
+      assert.equal(await page.locator('#drawing-speed').textContent(), `${speed}×`);
+      assert.equal(await page.locator(`.speed-presets [aria-pressed="true"]`).getAttribute('data-speed'), String(speed));
+      await page.waitForFunction(() => document.querySelector('.hero__brand').dataset.handwriting === 'complete');
+      const duration = Date.now() - started;
+      assert.ok(Math.abs(duration - 5650 / speed) < 600, `${speed}× took ${duration}ms`);
+    }
+    await page.reload();
+    await page.waitForSelector('.speed-picker:not([hidden])');
+    assert.equal(await page.locator('#drawing-speed').textContent(), '4×');
+    await page.locator('.speed-picker summary').click();
+    await page.locator('[data-speed="1.5"]').click();
+    await page.waitForTimeout(200);
+    await page.locator('.speed-picker summary').click();
+    await page.locator('[data-speed="3"]').click();
+    await page.waitForFunction(() => document.querySelector('.hero__brand').dataset.handwriting === 'complete');
 
     const button = page.getByRole('button', { name: 'Replay Bit Clever handwriting animation' });
     await button.focus();
@@ -48,6 +71,17 @@ const output = path.resolve(__dirname, '../.local/handwriting-audit');
     assert.equal(await page.locator('.hero__logo').isVisible(), true);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.screenshot({ path: path.join(output, 'website-mobile.png') });
+    await page.setViewportSize({ width: 320, height: 640 });
+    await page.locator('.speed-picker summary').click();
+    const menu = await page.locator('.speed-options').boundingBox();
+    assert.ok(menu.x >= 8 && menu.x + menu.width <= 312 && menu.y >= 8);
+    await page.screenshot({ path: path.join(output, 'speed-menu-mobile.png') });
+    await page.locator('[data-speed="2.5"]').click();
+    assert.equal(await page.locator('.hero__brand').getAttribute('data-handwriting'), 'complete');
+    await page.locator('.speed-picker summary').click();
+    await page.locator('.noise-picker summary').click();
+    await page.waitForFunction(() => !document.querySelector('.speed-picker').open);
+    await page.locator('.noise-picker summary').click();
 
     await page.goto(base + '/tools/handwriting-inspector.html');
     await page.waitForFunction(() => window.inspector);
@@ -81,6 +115,6 @@ const output = path.resolve(__dirname, '../.local/handwriting-audit');
     await failed.waitForFunction(() => document.querySelector('.hero__brand').dataset.handwriting === 'complete');
     assert.equal(await failed.locator('.hero__logo').isVisible(), true);
     await failed.close();
-    console.log('PASS: playback, keyboard replay, resize at 3 sizes, reduced motion, static SVG handoff, fixed Bit, delayed C eyes, no-JS and fetch-error fallbacks.');
+    console.log('PASS: all six speed timings, saved speed, changes during playback, mobile speed menu, playback, keyboard replay, resize at 3 sizes, reduced motion, static SVG handoff, fixed Bit, delayed C eyes, no-JS and fetch-error fallbacks.');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
