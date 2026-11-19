@@ -1,5 +1,17 @@
 # Bit Clever
 
+## Local preview
+
+On this Windows machine, double-click **Bit Clever - Website** on the desktop.
+The shortcut runs `tools/start-preview.ps1`, starts a hidden local Node server if
+needed, and opens http://127.0.0.1:4175 in your default browser. HTML, CSS,
+JavaScript, and asset edits automatically reload the page; noise settings remain
+saved in the browser. No package installation or build step is required.
+
+Alternatively, run `node tools/preview-server.cjs` and open that URL. The server
+binds only to this computer, and the shortcut reuses it on subsequent launches.
+This is full-page live reload, not framework component hot replacement.
+
 A fullscreen, background-only hero matching the supplied Apollo reference. Serve
 this directory with any static web server; no build step or runtime dependencies
 are needed. GitHub Pages serves `main` directly.
