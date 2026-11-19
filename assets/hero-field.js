@@ -2,7 +2,7 @@
 // Regenerate with tools/calibrate-hero.py; coordinates are relative to the hero.
 export const HERO_FIELD = Object.freeze({
   dark: [18.130637, 52.283003, 51.061419],
-  periwinkle: [183.784579, 198.599435, 242.101468],
+  periwinkle: [153, 172, 229],
   mint: [23.376517, 177.212683, 130.096887],
   fade: {
     x: 0.327591, y: 0.013574, aspect: 1.113856,

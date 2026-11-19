@@ -3,9 +3,19 @@ import { HERO_FIELD as field } from './hero-field.js';
 const canvas = document.querySelector('.hero__background');
 const context = canvas?.getContext('2d', { alpha: false });
 
+const variations = [
+  ['Original',1,1,true,.7], ['Whisper',.45,1,true,.7],
+  ['Fine film',.8,.65,true,.7], ['Crisp grain',.85,1,false,.7],
+  ['Soft film',1,1.6,true,.7], ['Rich grain',1.8,1,true,.7],
+  ['Coarse film',1.4,2.4,true,.7], ['Sand',1.5,.8,false,.7],
+  ['Even grain',.9,1,true,0], ['Deep texture',2.3,1.7,true,.4],
+].map(([name,strength,size,soft,fade]) => ({name,strength,size,soft,fade}));
+let selected = 0;
+let renderedVariation = -1;
+
 // A seamless, repeatable monochrome grain. The 2x2 filter matches the
 // reference's soft, one-pixel grain instead of adding sharp digital speckles.
-function makeGrain(seed, size = 512) {
+function makeGrain(seed, size = 512, soft = true) {
   const white = new Float32Array(size * size);
   const filtered = new Float32Array(size * size);
   let state = seed >>> 0;
@@ -25,7 +35,7 @@ function makeGrain(seed, size = 512) {
       ) / 2;
     }
   }
-  return { pixels: filtered, size };
+  return { pixels: soft ? filtered : white, size };
 }
 
 function render() {
@@ -37,14 +47,15 @@ function render() {
   const scale = Math.min(window.devicePixelRatio || 1, 2, Math.sqrt(4000000 / (width * height)));
   const w = Math.max(1, Math.round(width * scale));
   const h = Math.max(1, Math.round(height * scale));
-  if (canvas.width === w && canvas.height === h && canvas.dataset.rendered) return;
+  if (canvas.width === w && canvas.height === h && canvas.dataset.rendered && renderedVariation === selected) return;
   canvas.width = w;
   canvas.height = h;
 
   const frame = context.createImageData(w, h);
   const pixels = frame.data;
   const { dark, periwinkle, mint, fade, glow, grain: grainSettings } = field;
-  const grain = makeGrain(grainSettings.seed);
+  const variant = variations[selected];
+  const grain = makeGrain(grainSettings.seed, 512, variant.soft);
   const noiseSize = grain.size;
   const stretchX = width / w;
   const stretchY = height / h;
@@ -57,7 +68,7 @@ function render() {
     const u = w > 1 ? x / (w - 1) : 0;
     xValues[x] = ((u - fade.x) * fade.aspect) ** 2;
     glowXValues[x] = ((u - glow.x) / glow.radiusX) ** 2;
-    const nx = x * stretchX;
+    const nx = x * stretchX / variant.size;
     noiseX[x] = Math.floor(nx) % noiseSize;
     noiseMixX[x] = nx - Math.floor(nx);
   }
@@ -66,7 +77,7 @@ function render() {
     const v = h > 1 ? y / (h - 1) : 0;
     const fadeY = (v - fade.y) ** 2;
     const glowY = ((v - glow.y) / glow.radiusY) ** 2;
-    const ny = y * stretchY;
+    const ny = y * stretchY / variant.size;
     const row = Math.floor(ny) % noiseSize;
     const nextRow = ((row + 1) % noiseSize) * noiseSize;
     const rowOffset = row * noiseSize;
@@ -82,7 +93,7 @@ function render() {
       const a = grain.pixels[rowOffset + nx] * (1 - mixX) + grain.pixels[rowOffset + nextX] * mixX;
       const b = grain.pixels[nextRow + nx] * (1 - mixX) + grain.pixels[nextRow + nextX] * mixX;
       const noise = (a * (1 - mixY) + b * mixY)
-        * (grainSettings.deviation * ((1 - blue) ** grainSettings.fadePower) + grainSettings.mint * green);
+        * (grainSettings.deviation * ((1 - blue) ** variant.fade) + grainSettings.mint * green) * variant.strength;
       const offset = (y * w + x) * 4;
       for (let channel = 0; channel < 3; channel++) {
         const base = dark[channel] + (periwinkle[channel] - dark[channel]) * blue;
@@ -94,6 +105,8 @@ function render() {
 
   context.putImageData(frame, 0, 0);
   canvas.dataset.rendered = 'true';
+  renderedVariation = selected;
+  canvas.dataset.variation = String(selected);
 }
 
 if (context) {
@@ -104,5 +117,39 @@ if (context) {
   };
   new ResizeObserver(scheduleRender).observe(canvas);
   window.addEventListener('resize', scheduleRender, { passive: true });
+
+  const picker = document.querySelector('.noise-picker');
+  const options = picker.querySelector('.noise-options');
+  const name = document.querySelector('#noise-name');
+  try {
+    const saved = Number(localStorage.getItem('hero-noise-variation'));
+    if (Number.isInteger(saved) && saved >= 0 && saved < variations.length) selected = saved;
+  } catch {}
+  const buttons = variations.map((variation, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = variation.name;
+    button.setAttribute('aria-pressed', String(selected === index));
+    button.addEventListener('click', () => {
+      selected = index;
+      name.textContent = variation.name;
+      buttons.forEach((item, i) => item.setAttribute('aria-pressed', String(i === index)));
+      try { localStorage.setItem('hero-noise-variation', String(index)); } catch {}
+      scheduleRender();
+    });
+    options.append(button);
+    return button;
+  });
+  name.textContent = variations[selected].name;
+  picker.hidden = false;
+  document.addEventListener('pointerdown', event => {
+    if (!picker.contains(event.target)) picker.open = false;
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && picker.open) {
+      picker.open = false;
+      picker.querySelector('summary').focus();
+    }
+  });
   scheduleRender();
 }
