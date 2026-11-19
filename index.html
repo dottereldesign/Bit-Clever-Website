@@ -71,13 +71,14 @@
       width: 100%;
       height: auto;
     }
-    .hero__brand[data-handwriting="waiting"] .hero__logo { clip-path: inset(0 65.35% 0 0); }
+    .hero__brand[data-handwriting="waiting"] .hero__logo { visibility: hidden; }
     .hero__brand[data-handwriting="playing"] .hero__logo { visibility: hidden; }
     .hero__handwriting { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .hero__bit-intro { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
     .hero__handwriting[hidden] { display: none; }
     @media (prefers-reduced-motion: reduce) {
       .hero__brand[data-handwriting] .hero__logo { clip-path: none; visibility: visible; }
-      .hero__handwriting { display: none; }
+      .hero__handwriting, .hero__bit-intro { display: none !important; }
     }
 
     .hero__message { position: absolute; z-index: 1; top: calc(50% + min(156.8px, 13.12cqw, 29.94cqh) + 18px); left: 0; width: 100%; margin: 0; text-align: center; color: white; font: 500 clamp(12px, 1.3vw, 16px)/1.4 Arial,sans-serif; letter-spacing: .22em; text-transform: uppercase; }
@@ -122,7 +123,7 @@
   </style>
   <script type="module" src="./assets/hero-background.js"></script>
   <script type="module" src="./assets/logo-animation.js"></script>
-  <noscript><style>.hero__brand[data-handwriting] .hero__logo { clip-path: none; }.coming-soon { opacity: 1; }</style></noscript>
+  <noscript><style>.hero__brand[data-handwriting] .hero__logo { clip-path: none; visibility: visible; }.coming-soon { opacity: 1; }</style></noscript>
 </head>
 <body>
   <header class="site-header">
@@ -149,6 +150,7 @@
   <details class="settings">
     <summary aria-label="Appearance settings" title="Appearance settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="#123433"/><circle cx="15" cy="17" r="3" fill="#123433"/></svg></summary>
     <div class="settings-panel">
+      <select id="bit-style" aria-label="Bit entrance"></select>
       <select id="eye-style" aria-label="Eye animation"></select>
       <select id="drawing-speed" aria-label="Drawing speed"></select>
       <select id="coming-style" aria-label="Coming soon entrance"></select>

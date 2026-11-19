@@ -1,3 +1,4 @@
+import { createBitIntro, bitVariations } from './bit-intro.js';
 import { createComingSoon } from './coming-soon.js';
 import { createHandwritingPainter } from './handwriting-renderer.js';
 
@@ -12,6 +13,12 @@ if (logo) {
   canvas.setAttribute('aria-hidden', 'true');
   canvas.hidden = true;
   replay.append(canvas);
+  let intro, wall = 0, variation = 'soft';
+  try { const saved = localStorage.getItem('bit-clever-intro'); if (saved in bitVariations) variation = saved; } catch {}
+  const introSelect = document.querySelector('#bit-style');
+  for (const [value, item] of Object.entries(bitVariations)) { const option = document.createElement('option'); option.value = value; option.textContent = item.name; introSelect.append(option); }
+  introSelect.value = variation;
+  introSelect.addEventListener('change', () => { variation = introSelect.value; try { localStorage.setItem('bit-clever-intro', variation); } catch {} play(); });
   let paint, data, request = 0, started = 0, elapsed = 0;
   const speeds = [1, 1.5, 2, 2.5, 3, 4];
   const storageKey = 'bit-clever-handwriting-speed-v2';
@@ -25,6 +32,7 @@ if (logo) {
     cancelAnimationFrame(request);
     request = 0;
     canvas.hidden = true;
+    intro?.hide();
     replay.dataset.handwriting = 'complete';
     message.show();
   };
@@ -43,7 +51,12 @@ if (logo) {
   let eyeStyle = 'wiggle';
   try { const saved = localStorage.getItem('bit-clever-eye-style-v2'); if (saved in eyeStyles) eyeStyle = saved; } catch {}
   let eyeProgress = 0;
-  const draw = () => paint(elapsed, { eyeStyle, eyeProgress });
+  const writingDuration = () => (data.inkEnd - data.route[0][3]) / speed;
+  const revealAt = () => bitVariations[variation].drop * .64 + writingDuration() + .7;
+  const draw = () => {
+    paint(elapsed, { eyeStyle, eyeProgress, hideBit: true });
+    intro.paint(wall, revealAt(), variation);
+  };
   const eyeSelect = document.querySelector('#eye-style');
   for (const [value, label] of Object.entries(eyeStyles)) {
     const option = document.createElement('option'); option.value = value; option.textContent = label;
@@ -56,11 +69,12 @@ if (logo) {
     play();
   });
   const tick = now => {
-    const wall = (now - started) / 1000;
-    elapsed = Math.min(data.inkEnd, wall * speed);
-    eyeProgress = Math.max(0, Math.min(1, (wall - data.inkEnd / speed - .08) / .62));
+    wall = (now - started) / 1000;
+    const writing = Math.max(0, wall - bitVariations[variation].drop * .64);
+    elapsed = wall < bitVariations[variation].drop * .64 ? 0 : Math.min(data.inkEnd, data.route[0][3] + writing * speed);
+    eyeProgress = Math.max(0, Math.min(1, (writing - writingDuration() - .08) / .62));
     draw();
-    if (eyeProgress >= 1) finish();
+    if (wall >= revealAt() + bitVariations[variation].slide) finish();
     else request = requestAnimationFrame(tick);
   };
   const play = () => {
@@ -68,6 +82,7 @@ if (logo) {
     cancelAnimationFrame(request);
     message.reset();
     elapsed = 0;
+    wall = 0;
     size();
     eyeProgress = 0;
     draw();
@@ -110,6 +125,7 @@ if (logo) {
   ]).then(([svg, strokes]) => {
     data = strokes;
     paint = createHandwritingPainter(canvas, svg, data);
+    intro = createBitIntro(replay, svg);
     setupSpeedControls();
     if (reducedMotion.matches) finish();
     else play();

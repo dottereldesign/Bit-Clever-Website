@@ -38,12 +38,12 @@ export function createHandwritingPainter(canvas, svgText, data) {
     brush.lineTo(b[0] + b[2] * nx, b[1] + b[2] * ny);
     brush.closePath();
   };
-  return function paint(time, { outline = false, inkOnly = false, eyeStyle = "fade", eyeProgress } = {}) {
+  return function paint(time, { outline = false, inkOnly = false, eyeStyle = "fade", eyeProgress, hideBit = false } = {}) {
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.setTransform(canvas.width / 456, 0, 0, canvas.height / 130,
       -52 * canvas.width / 456, -28 * canvas.height / 130);
-    if (!inkOnly) {
+    if (!inkOnly && !hideBit) {
       context.fillStyle = '#fff';
       context.fill(bit, 'evenodd');
       for (const eye of eyes.slice(0, 2)) {
