@@ -13,6 +13,34 @@ if (logo) {
   canvas.setAttribute('aria-hidden', 'true');
   canvas.hidden = true;
   replay.append(canvas);
+  let itSize = 80;
+  const itSizes = [65, 70, 75, 80, 85];
+  try { const saved = Number(localStorage.getItem('bit-clever-it-size-v2')); if (itSizes.includes(saved)) itSize = saved; } catch {}
+  const itSelect = document.querySelector('#it-size');
+  itSizes.forEach(value => itSelect.add(new Option(`it ${value}%`, value)));
+  itSelect.value = itSize;
+  let sizeRequest = 0;
+  const setArtwork = (svg) => {
+    intro?.remove();
+    paint = createHandwritingPainter(canvas, svg, data);
+    intro = createBitIntro(replay, svg);
+    logo.src = `./assets/bit-clever-logo-white-${itSize}.svg`;
+    document.querySelector('.site-logo img').src = `./assets/bit-clever-logo-black-${itSize}.svg`;
+  };
+  itSelect.addEventListener('change', async () => {
+    const token = ++sizeRequest;
+    const selected = Number(itSelect.value);
+    try {
+      const response = await fetch(new URL(`./bit-clever-logo-white-${selected}.svg`, import.meta.url));
+      if (!response.ok) throw new Error('Logo unavailable');
+      const svg = await response.text();
+      if (token !== sizeRequest) return;
+      itSize = selected;
+      try { localStorage.setItem('bit-clever-it-size-v2', String(itSize)); } catch {}
+      setArtwork(svg);
+      if (reducedMotion.matches) finish(); else play();
+    } catch { itSelect.value = itSize; }
+  });
   let intro, wall = 0, variation = 'reboundGlance';
   try { const saved = localStorage.getItem('bit-clever-intro-v2'); if (saved in bitVariations) variation = saved; } catch {}
   const introSelect = document.querySelector('#bit-style');
@@ -114,7 +142,7 @@ if (logo) {
   }
 
   Promise.all([
-    fetch(new URL('./bit-clever-logo-white.svg', import.meta.url)).then(response => {
+    fetch(new URL(`./bit-clever-logo-white-${itSize}.svg`, import.meta.url)).then(response => {
       if (!response.ok) throw new Error('Logo unavailable');
       return response.text();
     }),
@@ -124,8 +152,7 @@ if (logo) {
     }),
   ]).then(([svg, strokes]) => {
     data = strokes;
-    paint = createHandwritingPainter(canvas, svg, data);
-    intro = createBitIntro(replay, svg);
+    setArtwork(svg);
     setupSpeedControls();
     if (reducedMotion.matches) finish();
     else play();

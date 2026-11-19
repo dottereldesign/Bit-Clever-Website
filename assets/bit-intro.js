@@ -9,6 +9,8 @@ export const bitVariations = {
 const smooth = t => t * t * t * (10 + t * (-15 + 6 * t));
 export function createBitIntro(host, svgText) {
   const source = new DOMParser().parseFromString(svgText, 'image/svg+xml');
+  const offset = Number(source.documentElement.getAttribute('data-bit-shift') || 76);
+  const center = Number(source.documentElement.getAttribute('data-bit-center') || 97);
   const parts = source.querySelector('path').getAttribute('d').match(/M[^M]+/g);
   const svg = document.createElementNS(ns, 'svg');
   svg.setAttribute('viewBox', '52 28 456 130');
@@ -22,6 +24,7 @@ export function createBitIntro(host, svgText) {
   const letters = svg.querySelector('.hidden-it');
   host.append(svg);
   return {
+    remove() { svg.remove(); },
     hide() { svg.style.display = 'none'; },
     paint(wall, revealStart, variation) {
       svg.style.display = 'block';
@@ -37,7 +40,7 @@ export function createBitIntro(host, svgText) {
       const squash = .065 * Math.sin(Math.PI * Math.min(1, settle * 2)) * (1 - settle);
       const angle = p.tilt * (1 - smooth(fall)) + (p.glance ? -2 * Math.sin(Math.PI * slide) : 0);
       const y = fall < 1 ? fallingY : rebound;
-      const transform = `translate(${76 * (1 - shift)} ${y}) translate(97 141) rotate(${angle}) scale(${1 + squash} ${1 - squash}) translate(-97 -141)`;
+      const transform = `translate(${offset * (1 - shift)} ${y}) translate(${center} 141) rotate(${angle}) scale(${1 + squash} ${1 - squash}) translate(${-center} -141)`;
       b.setAttribute('transform', transform);
       occluder.setAttribute('transform', transform);
       // Letters use their final, fixed-size outlines. Only B moves across them.
