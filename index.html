@@ -4,19 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Bit Clever Website</title>
-  <meta name="theme-color" content="#123433">
+  <meta name="theme-color" content="#000000">
   <style>
     * { box-sizing: border-box; }
-    html { background: #123433; }
+    html { background: #000; }
     body {
       margin: 0;
+      padding: 8px;
     }
     .hero {
       position: relative;
       isolation: isolate;
       width: 100%;
-      height: 100vh;
-      height: 100svh;
+      height: calc(100vh - 16px);
+      height: calc(100svh - 16px);
+      border-radius: 24px;
       overflow: hidden;
       /* The same palette remains visible before the precise canvas is ready. */
       background:
