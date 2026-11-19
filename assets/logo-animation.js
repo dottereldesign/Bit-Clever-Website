@@ -83,7 +83,7 @@ if (logo) {
     const select = document.querySelector('#drawing-speed');
     for (const value of speeds) {
       const option = document.createElement('option');
-      option.value = value; option.textContent = `${value}×`;
+      option.value = value; option.textContent = `${value}\u00d7`;
       select.append(option);
     }
     select.value = speed;

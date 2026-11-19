@@ -33,7 +33,7 @@ contains the black Bit Clever logo and contact button (destination to be added).
 
 The circular button sits 8px from the bottom and right. Its panel contains only
 three dropdowns: eye entrance, drawing speed, and noise. Defaults are Playful
-wiggle, 3×, and Whisper. All six eye entrances, six speeds, and ten noise presets
+wiggle, 3x, and Whisper. All six eye entrances, six speeds, and ten noise presets
 remain available. Choices persist in each browser. These new defaults replace
 older saved preferences once; subsequent selections are remembered.
 
@@ -46,7 +46,7 @@ The hero's Clever lettering writes on once per page load. Click or keyboard-acti
 the hero logo to replay it. Bit and the header logo stay static. Pen travel starts
 at the C's upper-right terminal, follows the C bowl into the l loop, then the e,
 v, second e, and r exit. The C eyes appear after the last stroke. The sequence
-takes about 2.5 seconds at the default 3× speed, including the eye entrance.
+takes about 2.5 seconds at the default 3x speed, including the eye entrance.
 Changing the eye or speed dropdown replays it immediately. Reduced-motion
 preferences show the completed logo immediately.
 
