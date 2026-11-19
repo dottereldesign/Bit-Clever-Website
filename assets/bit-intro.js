@@ -9,7 +9,8 @@ export const bitVariations = {
 const smooth = t => t * t * t * (10 + t * (-15 + 6 * t));
 export function createBitIntro(host, svgText) {
   const source = new DOMParser().parseFromString(svgText, 'image/svg+xml');
-  const offset = Number(source.documentElement.getAttribute('data-bit-shift') || 76);
+  // Give the landing six extra logo units of space before C; final position stays fixed.
+  const offset = Number(source.documentElement.getAttribute('data-bit-shift') || 76) - 6;
   const center = Number(source.documentElement.getAttribute('data-bit-center') || 97);
   const parts = source.querySelector('path').getAttribute('d').match(/M[^M]+/g);
   const svg = document.createElementNS(ns, 'svg');
@@ -26,12 +27,12 @@ export function createBitIntro(host, svgText) {
   return {
     remove() { svg.remove(); },
     hide() { svg.style.display = 'none'; },
-    paint(wall, revealStart, variation) {
+    paint(wall, revealStart, variation, moveSpeed = 1) {
       svg.style.display = 'block';
       const p = bitVariations[variation];
       const fall = Math.min(1, Math.max(0, wall / (p.drop * .64)));
       const settle = Math.min(1, Math.max(0, (wall - p.drop * .64) / (p.drop * .36)));
-      const slide = Math.min(1, Math.max(0, (wall - revealStart) / p.slide));
+      const slide = Math.min(1, Math.max(0, (wall - revealStart) * moveSpeed / p.slide));
       const shift = smooth(slide);
       const height = host.getBoundingClientRect().height;
       const distance = (host.closest('.hero').getBoundingClientRect().height / 2 + height) * 130 / height;

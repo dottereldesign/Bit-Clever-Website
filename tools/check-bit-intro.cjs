@@ -5,6 +5,8 @@ const assert=require('node:assert/strict');
  await p.addInitScript(()=>{window.testTime=0;window.testFrames=new Map();let id=0;performance.now=()=>window.testTime;window.requestAnimationFrame=fn=>{window.testFrames.set(++id,fn);return id};window.cancelAnimationFrame=id=>window.testFrames.delete(id);window.step=t=>{window.testTime=t;const jobs=[...window.testFrames.values()];window.testFrames.clear();jobs.forEach(fn=>fn(t))}});
  await p.goto((process.env.PREVIEW_URL || 'http://127.0.0.1:4175'));await p.waitForSelector('.hero__bit-intro');
  assert.equal(await p.locator('#bit-style').inputValue(),'reboundGlance');
+ assert.equal(await p.locator('#bit-move-speed').inputValue(),'1.5');
+ await p.selectOption('#bit-move-speed','1',{force:true});
  const variants={reboundGlance:[1.2,.9],soft:[1.05,.85],spring:[1.2,.95],glance:[1.15,.9],feather:[1.35,1.1]};
  let start=0;
  for(const [v,[drop,slide]]of Object.entries(variants)){
@@ -18,6 +20,15 @@ const assert=require('node:assert/strict');
  await p.screenshot({path:`.local/bit-${v}-reveal.png`});
  await advance(reveal+slide+.02);assert.equal(await p.locator('.hero__brand').getAttribute('data-handwriting'),'complete');
  start+=reveal+slide+.02;
+ }
+ for (const speed of [1, 1.25, 1.5, 2, 2.5]) {
+ await p.selectOption('#bit-move-speed',String(speed),{force:true});
+ const end=1.35*.64+5/3+.7+1.1/speed;
+ await p.evaluate(t=>window.step(t),(start+end-.02)*1000);
+ assert.equal(await p.locator('.hero__brand').getAttribute('data-handwriting'),'playing');
+ await p.evaluate(t=>window.step(t),(start+end+.02)*1000);
+ assert.equal(await p.locator('.hero__brand').getAttribute('data-handwriting'),'complete');
+ start+=end+.02;
  }
  await p.screenshot({path:'.local/bit-final.png'});
  await p.setViewportSize({width:375,height:812});await p.locator('.hero__brand').dispatchEvent('click');await p.evaluate(t=>window.step(t),(start+1.5)*1000);await p.screenshot({path:'.local/bit-mobile.png'});

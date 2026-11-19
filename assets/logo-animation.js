@@ -41,6 +41,17 @@ if (logo) {
       if (reducedMotion.matches) finish(); else play();
     } catch { itSelect.value = itSize; }
   });
+  const moveSpeeds = [1, 1.25, 1.5, 2, 2.5];
+  let moveSpeed = 1.5;
+  try { const saved = Number(localStorage.getItem('bit-clever-move-speed')); if (moveSpeeds.includes(saved)) moveSpeed = saved; } catch {}
+  const moveSelect = document.querySelector('#bit-move-speed');
+  moveSpeeds.forEach(value => moveSelect.add(new Option(`B move ${value}\u00d7`, value)));
+  moveSelect.value = moveSpeed;
+  moveSelect.addEventListener('change', () => {
+    moveSpeed = Number(moveSelect.value);
+    try { localStorage.setItem('bit-clever-move-speed', String(moveSpeed)); } catch {}
+    play();
+  });
   let intro, wall = 0, variation = 'reboundGlance';
   try { const saved = localStorage.getItem('bit-clever-intro-v2'); if (saved in bitVariations) variation = saved; } catch {}
   const introSelect = document.querySelector('#bit-style');
@@ -83,7 +94,7 @@ if (logo) {
   const revealAt = () => bitVariations[variation].drop * .64 + writingDuration() + .7;
   const draw = () => {
     paint(elapsed, { eyeStyle, eyeProgress, hideBit: true });
-    intro.paint(wall, revealAt(), variation);
+    intro.paint(wall, revealAt(), variation, moveSpeed);
   };
   const eyeSelect = document.querySelector('#eye-style');
   for (const [value, label] of Object.entries(eyeStyles)) {
@@ -102,7 +113,7 @@ if (logo) {
     elapsed = wall < bitVariations[variation].drop * .64 ? 0 : Math.min(data.inkEnd, data.route[0][3] + writing * speed);
     eyeProgress = Math.max(0, Math.min(1, (writing - writingDuration() - .08) / .62));
     draw();
-    if (wall >= revealAt() + bitVariations[variation].slide) finish();
+    if (wall >= revealAt() + bitVariations[variation].slide / moveSpeed) finish();
     else request = requestAnimationFrame(tick);
   };
   const play = () => {

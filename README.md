@@ -32,7 +32,7 @@ contains the black Bit Clever logo and contact button (destination to be added).
 ## Appearance controls
 
 The circular button sits 8px from the bottom and right. Its panel contains only
-six dropdowns: it size, Bit entrance, eye entrance, drawing speed, Coming soon entrance, and noise. Defaults are Playful
+seven dropdowns: it size, Bit entrance, B move speed, eye entrance, drawing speed, Coming soon entrance, and noise. Defaults are Playful
 wiggle, 3x, and Whisper. All six eye entrances, six speeds, and ten noise presets
 remain available. Choices persist in each browser. These new defaults replace
 older saved preferences once; subsequent selections are remembered.
@@ -119,3 +119,6 @@ The it size menu offers 65%, 70%, 75%, 80% (default), and 85%. Every size
 keeps a 6-unit B–i gap and the original t–C spacing. The letters remain
 stationary during the reveal; the selected size is remembered locally.
 The bottom of it aligns precisely with the bottom of B at every size.
+
+B lands six logo units farther left. Its independent move speed offers 1×,
+1.25×, 1.5× (default), 2×, and 2.5×, without changing landing or handwriting timing.
