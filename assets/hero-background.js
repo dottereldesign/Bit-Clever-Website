@@ -62,13 +62,20 @@ function render() {
   const noiseSize = grain.size;
   const stretchX = width / w;
   const stretchY = height / h;
+  // Keep the reference artboard proportional. Smaller viewports reveal a
+  // centered crop; larger viewports scale it uniformly, never stretch it.
+  const artScale = Math.max(1, width / 795, height / 648);
+  const artWidth = 795 * artScale;
+  const artHeight = 648 * artScale;
+  const cropX = (artWidth - width) / 2;
+  const cropY = (artHeight - height) / 2;
   const xValues = new Float64Array(w);
   const glowXValues = new Float64Array(w);
   const noiseX = new Uint16Array(w);
   const noiseMixX = new Float32Array(w);
 
   for (let x = 0; x < w; x++) {
-    const u = w > 1 ? x / (w - 1) : 0;
+    const u = (x * stretchX + cropX) / (artWidth - artScale);
     xValues[x] = ((u - fade.x) * fade.aspect) ** 2;
     glowXValues[x] = ((u - glow.x) / glow.radiusX) ** 2;
     const nx = x * stretchX / grainSize;
@@ -77,7 +84,7 @@ function render() {
   }
 
   for (let y = 0; y < h; y++) {
-    const v = h > 1 ? y / (h - 1) : 0;
+    const v = (y * stretchY + cropY) / (artHeight - artScale);
     const fadeY = (v - fade.y) ** 2;
     const glowY = ((v - glow.y) / glow.radiusY) ** 2;
     const ny = y * stretchY / grainSize;
