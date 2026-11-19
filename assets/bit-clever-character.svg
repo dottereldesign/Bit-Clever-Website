@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="64 98 154 216" fill="none">
+  <title>Bit Clever B character</title>
+  <desc>A white letter B with two black oval eyes and small outward-facing feet, standing over a soft ground shadow.</desc>
+  <defs>
+    <radialGradient id="ground">
+      <stop stop-color="#071c1a" stop-opacity=".38"/>
+      <stop offset=".6" stop-color="#071c1a" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#071c1a" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soften" x="-.2" y="-.8" width="1.4" height="2.6">
+      <feGaussianBlur stdDeviation="1.1"/>
+    </filter>
+  </defs>
+  <!-- The shadow stays on the ground, rather than outlining the letter. -->
+  <ellipse cx="131" cy="302" rx="62" ry="6.2" fill="url(#ground)"/>
+  <ellipse cx="130" cy="300.8" rx="37" ry="2.4" fill="#071c1a" opacity=".16" filter="url(#soften)"/>
+  <!-- Short, separate legs and softly rounded shoes, as in the reference. -->
+  <path fill="#fff" d="M109.6 266.5 122.1 266.2 122.2 296.8Q122.3 301.8 117.5 301.9L96.2 301.9Q90.1 301.9 91.2 296.2C92.2 290.1 98.7 286.7 109.3 287.1Z"/>
+  <path fill="#fff" d="M137.3 266.3 149.7 266.5 149.9 286.6C159.2 286.5 166.2 290.7 167.1 296.2Q168 301.8 162.3 301.9L142.1 301.9Q137 301.9 137 297.2Z"/>
+  <!-- Traced silhouette: flat back, smaller upper bowl, fuller lower bowl. -->
+  <path fill="#fff" d="M78.2 107.5 140.7 107.3C169.8 106.8 191.9 121.8 193.3 147.4C194.4 163.8 188.5 177.3 176.3 185.4C194.5 190 205.2 203.2 205.3 221.1C205.6 245.5 184.4 260.8 155.3 261.1L78.3 261.1Q76.6 261.1 76.7 259.4L76.7 109Q76.7 107.5 78.2 107.5Z"/>
+  <!-- Slightly organic ovals preserve the character's expression. -->
+  <path fill="#000" d="M119.5 145.7C124.1 145.5 126.9 152.6 126.9 161.9C126.9 171.7 123.8 179.4 119.1 179.6C114.2 179.7 111.2 172.7 111.4 163C111.5 153.5 114.7 146 119.5 145.7Z"/>
+  <path fill="#000" d="M148.3 143.8C152.8 144 155.3 151.2 155 160.5C154.7 170 151.6 177.5 147.1 177.4C142.5 177.3 139.9 170 140.3 160.5C140.6 151 143.8 143.7 148.3 143.8Z"/>
+</svg>
