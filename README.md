@@ -108,4 +108,4 @@ changes substantially, also update the fallback gradients in `index.html`.
 
 The eye dropdown offers Cute bump, One then the other, Wake-up blink, Float up, Playful wiggle, and Soft fade. Choices replay immediately and persist in the browser. Eyes enter only after the writing finishes, with a separate 0.7-second finish at every drawing speed. Reduced motion keeps the completed logo still.
 
-“Coming soon” sits below the hero logo and enters after the C eyes finish. Its six entrance presets are Gentle rise (default), Quiet fade, Focus in, Soft bounce, Typewriter, and Letter cascade. Selection replays the full sequence and is remembered. Reduced motion shows the message immediately.
+“Coming soon” sits below the hero logo and enters after the C eyes finish. Its six entrance presets are Gentle rise, Quiet fade, Focus in (default), Soft bounce, Typewriter, and Letter cascade. Selection replays the full sequence and is remembered. Reduced motion shows the message immediately.

@@ -2,8 +2,8 @@ export function createComingSoon(reducedMotion, replay) {
   const text = document.querySelector('.coming-soon');
   const select = document.querySelector('#coming-style');
   const styles = { rise: 'Gentle rise', fade: 'Quiet fade', blur: 'Focus in', pop: 'Soft bounce', type: 'Typewriter', cascade: 'Letter cascade' };
-  let style = 'rise', shown = false;
-  try { const saved = localStorage.getItem('bit-clever-coming-style'); if (saved in styles) style = saved; } catch {}
+  let style = 'blur', shown = false;
+  try { const saved = localStorage.getItem('bit-clever-coming-style-v2'); if (saved in styles) style = saved; } catch {}
   for (const [value, label] of Object.entries(styles)) {
     const option = document.createElement('option');
     option.value = value; option.textContent = label; select.append(option);
@@ -11,7 +11,7 @@ export function createComingSoon(reducedMotion, replay) {
   select.value = style;
   select.addEventListener('change', () => {
     style = select.value;
-    try { localStorage.setItem('bit-clever-coming-style', style); } catch {}
+    try { localStorage.setItem('bit-clever-coming-style-v2', style); } catch {}
     reset();
     if (reducedMotion.matches) show(); else replay();
   });
