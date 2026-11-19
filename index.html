@@ -58,9 +58,14 @@
       transform: translate(-50%, -50%);
       width: min(1100px, 92cqw, 210cqh);
       aspect-ratio: 456 / 130;
-      pointer-events: none;
       user-select: none;
+      display: block;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
     }
+    .hero__brand:focus-visible { outline: 2px solid white; outline-offset: 12px; border-radius: 8px; }
     .hero__logo {
       display: block;
       width: 100%;
@@ -94,6 +99,7 @@
     #save-noise-status:empty { display: none; }
   </style>
   <script type="module" src="./assets/hero-background.js"></script>
+  <script type="module" src="./assets/logo-animation.js"></script>
 </head>
 <body>
   <header class="site-header">
@@ -102,9 +108,9 @@
   </header>
   <main class="hero" aria-label="Bit Clever">
     <canvas class="hero__background" aria-hidden="true"></canvas>
-    <div class="hero__brand">
-      <img class="hero__logo" src="./assets/bit-clever-logo-white.svg" width="456" height="130" alt="Bit Clever" draggable="false">
-    </div>
+    <button class="hero__brand" type="button" aria-label="Replay Bit Clever handwriting animation" title="Click to replay the handwriting">
+      <img class="hero__logo" src="./assets/bit-clever-logo-animated.svg" width="456" height="130" alt="" draggable="false">
+    </button>
   </main>
   <details class="noise-picker" hidden>
     <summary>Noise: <span id="noise-name">Original</span></summary>

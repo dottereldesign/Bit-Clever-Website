@@ -38,6 +38,18 @@ The button is local-only; the public static site cannot write repository files.
 Published default revisions override stale browser tuning, while local draft
 settings remain available for further adjustment.
 
+## Hero handwriting
+
+The hero's Clever lettering writes on once per page load. Click or keyboard-activate
+the hero logo to replay it. Bit and the header logo stay static. Pen travel starts
+at the C's upper-right terminal, follows the C bowl into the l loop, then the e,
+v, second e, and r exit. The C eyes appear after the last stroke. The sequence
+takes 5.2 seconds; reduced-motion preferences show the completed logo immediately.
+
+The stroke masks reveal the approved filled outlines rather than drawing a new
+font. Run `python tools/build-handwriting.py` after changing the white logo's
+source paths or the pen routes to regenerate `assets/bit-clever-logo-animated.svg`.
+
 ## Reference calibration
 
 The optional offline tool fits the colours from 1,281 unobstructed 9Ã—9 patches.
