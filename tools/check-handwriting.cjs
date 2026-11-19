@@ -86,7 +86,7 @@ const output = path.resolve(__dirname, '../.local/handwriting-audit');
     await page.goto(base + '/tools/handwriting-inspector.html');
     await page.waitForFunction(() => window.inspector);
     const pixels = await page.evaluate(() => {
-      const { paint, canvas } = window.inspector;
+      const { paint, canvas, data } = window.inspector;
       const ctx = canvas.getContext('2d');
       paint(0);
       const bit = Array.from(ctx.getImageData(0, 0, 620, 520).data);
@@ -97,12 +97,31 @@ const output = path.resolve(__dirname, '../.local/handwriting-audit');
         paint(time);
         eyeAlpha.push(ctx.getImageData((270 - 52) * 4, (73 - 28) * 4, 1, 1).data[3]);
       }
-      return { fixedBit, eyeAlpha };
+      // Sample actual distance travelled in equal time intervals. Constant
+      // timing fails this check even when the UI still offers six multipliers.
+      let length = 0;
+      const distances = data.route.map((point, index) => {
+        if (index) length += Math.hypot(point[0] - data.route[index - 1][0], point[1] - data.route[index - 1][1]);
+        return length;
+      });
+      const distanceAt = time => {
+        const index = data.route.findIndex(point => point[3] > time);
+        if (index < 0) return length;
+        if (!index) return 0;
+        const f = (time - data.route[index - 1][3]) / (data.route[index][3] - data.route[index - 1][3]);
+        return distances[index - 1] + f * (distances[index] - distances[index - 1]);
+      };
+      const pace = Array.from({ length: 192 }, (_, i) =>
+        (distanceAt(.3 + (i + 1) * .025) - distanceAt(.3 + i * .025)) / .025 / (length / 4.8));
+      return { fixedBit, eyeAlpha, pace };
     });
     assert.equal(pixels.fixedBit, true);
     assert.equal(pixels.eyeAlpha[0], 0);
     assert.ok(pixels.eyeAlpha[1] > 0 && pixels.eyeAlpha[1] < 255);
     assert.equal(pixels.eyeAlpha[2], 255);
+    assert.ok(Math.min(...pixels.pace) > .2, 'The pen must keep moving forward');
+    assert.ok(Math.max(...pixels.pace) / Math.min(...pixels.pace) > 2, 'Pen pace should vary through the strokes');
+    assert.ok(pixels.pace.slice(1).every((value, i) => Math.abs(value - pixels.pace[i]) < .5), 'Momentum should change smoothly');
     assert.deepEqual(errors, []);
 
     const noJS = await browser.newPage({ javaScriptEnabled: false });
@@ -115,6 +134,6 @@ const output = path.resolve(__dirname, '../.local/handwriting-audit');
     await failed.waitForFunction(() => document.querySelector('.hero__brand').dataset.handwriting === 'complete');
     assert.equal(await failed.locator('.hero__logo').isVisible(), true);
     await failed.close();
-    console.log('PASS: all six speed timings, saved speed, changes during playback, mobile speed menu, playback, keyboard replay, resize at 3 sizes, reduced motion, static SVG handoff, fixed Bit, delayed C eyes, no-JS and fetch-error fallbacks.');
+    console.log('PASS: natural forward motion with smooth pace changes, all six speed timings, saved speed, changes during playback, mobile speed menu, playback, keyboard replay, resize at 3 sizes, reduced motion, static SVG handoff, fixed Bit, delayed C eyes, no-JS and fetch-error fallbacks.');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

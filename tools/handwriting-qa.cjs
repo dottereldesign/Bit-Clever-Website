@@ -36,10 +36,13 @@ async function frames(browser) {
 }
 
 async function sheets(browser) {
-  const groups = [['C', 0, 95, [210, 25, 110, 135]], ['l', 96, 148, [280, 65, 70, 85]],
-    ['e1', 149, 183, [328, 85, 52, 60]], ['v', 184, 226, [365, 85, 60, 60]],
-    ['e2', 227, 267, [407, 85, 48, 60]], ['r', 268, 306, [445, 70, 60, 75]],
-    ['finish', 307, 339, [210, 25, 295, 135]]];
+  const data = JSON.parse(await fs.readFile(path.join(root, 'assets/handwriting-data.json'), 'utf8'));
+  const crops = { C: [210, 25, 110, 135], l: [280, 65, 70, 85], e1: [328, 85, 52, 60],
+    v: [365, 85, 60, 60], e2: [407, 85, 48, 60], r: [445, 70, 60, 75] };
+  const letters = Object.entries(data.letters);
+  const groups = letters.map(([name, range], index) => [name, index ? Math.ceil(range[0] * 60) : 0,
+    Math.ceil((letters[index + 1]?.[1][0] ?? 5.1 + 1 / 60) * 60) - 1, crops[name]]);
+  groups.push(['finish', 307, 339, [210, 25, 295, 135]]);
   for (const [name, start, end, box] of groups) {
     const scale = Math.min(220 / box[2], 160 / box[3]);
     let cards = '';

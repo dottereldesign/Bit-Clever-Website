@@ -15,6 +15,7 @@ import numpy as np
 from skimage.morphology import medial_axis
 from scipy.spatial import cKDTree
 from scipy.ndimage import gaussian_filter1d, map_coordinates
+from handwriting_motion import natural_timing
 
 ROOT = Path(__file__).resolve().parents[1]
 S = 8
@@ -281,7 +282,7 @@ full_points = np.argwhere(full_skeleton)
 centres = np.array([p[:2] for p in out])
 radii = np.array([p[2] for p in out])
 lengths = np.r_[0, np.cumsum(np.linalg.norm(np.diff(centres, axis=0), axis=1))]
-times = 0.3 + lengths / lengths[-1] * 4.8
+times, motion = natural_timing(centres, lengths, [p[3] for p in out])
 extra = []
 index = cKDTree(centres)
 for y, x in full_points[::2]:
@@ -309,6 +310,7 @@ data = {
     "details": [[round(v, 4) for v in p] for p in extra],
     "duration": 5.65,
     "inkEnd": 5.3,
+    "motion": motion,
     "letters": {
         label: [
             float(times[[p[3] for p in out].index(label)]),

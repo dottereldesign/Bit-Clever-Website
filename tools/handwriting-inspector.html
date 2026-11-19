@@ -6,10 +6,10 @@
   main{max-width:1500px;margin:auto}h1{font-size:24px}canvas{display:block;width:100%;height:auto;background:#123433;border-radius:12px;margin:24px 0}
   .controls{display:flex;gap:16px;align-items:center;flex-wrap:wrap}button{padding:10px 16px;cursor:pointer}input[type=range]{width:100%;margin:20px 0}output{font-variant-numeric:tabular-nums}p{color:#b6cdca}
 </style>
-<main><h1>Handwriting frame inspector</h1><p>60 frames per second. Step through every frame or play slowly. Pink outlines show the approved logo.</p>
+<main><h1>Handwriting frame inspector</h1><p>Natural pen rhythm, as used in the hero. Step through at 60 frames per second or compare playback speeds. Pink outlines show the approved logo.</p>
 <canvas width="1824" height="520"></canvas>
 <input id="frame" type="range" min="0" max="339" value="0" step="1" aria-label="Animation frame">
-<div class="controls"><button id="previous">Previous frame</button><button id="play">Play / pause</button><button id="next">Next frame</button><label>Speed <select id="speed"><option value=".25">Quarter speed</option><option value=".5">Half speed</option><option value="1" selected>Normal</option></select></label><label><input id="outline" type="checkbox"> Outline overlay</label><output></output></div></main>
+<div class="controls"><button id="previous">Previous frame</button><button id="play">Play / pause</button><button id="next">Next frame</button><label>Speed <select id="speed"><option value=".25">Quarter speed</option><option value=".5">Half speed</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option><option value="2.5">2.5×</option><option value="3">3×</option><option value="4">4×</option></select></label><label><input id="outline" type="checkbox"> Outline overlay</label><output></output></div></main>
 <script type="module">
 import {createHandwritingPainter} from '../assets/handwriting-renderer.js';
 const [svg,data]=await Promise.all([fetch('../assets/bit-clever-logo-white.svg').then(r=>r.text()),fetch('../assets/handwriting-data.json').then(r=>r.json())]);

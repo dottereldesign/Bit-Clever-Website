@@ -45,10 +45,17 @@ the hero logo to replay it. Bit and the header logo stay static. Pen travel star
 at the C's upper-right terminal, follows the C bowl into the l loop, then the e,
 v, second e, and r exit. The C eyes appear after the last stroke. The sequence
 takes about 2.8 seconds at the default 2× speed. The **Drawing** menu above the
-noise controls offers 1× (original), 1.5×, 2×, 2.5×, 3×, and 4×. Selecting one
+noise controls offers 1×, 1.5×, 2×, 2.5×, 3×, and 4×. Selecting one
 immediately replays the animation and remembers the choice in that browser.
 The stroke route and eye order stay the same at every speed. Reduced-motion
 preferences show the completed logo immediately.
+
+All six speeds use the same natural pen rhythm. The C builds into a broad sweep,
+tight loop turns ease back, downstrokes and exits pick up momentum, and the r
+finishes with a softer lift. `tools/handwriting_motion.py` combines smoothed path
+curvature with authored speed impulses for each stroke, then normalizes the
+timing to preserve the preset durations. It changes timing only; ink geometry
+and the order of the strokes are unchanged. Speed always stays positive.
 
 The painter follows a variable-width pen route derived from the approved SVG.
 Each loop has a continuous rising stroke, turn, descending stroke, and exit.

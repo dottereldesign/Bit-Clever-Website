@@ -68,7 +68,7 @@ if (logo) {
     picker.querySelector('#drawing-speed').textContent = `${speed}×`;
     picker.querySelector('#speed-help').textContent = reducedMotion.matches
       ? 'Reduced motion is on; the logo stays still.'
-      : 'Choose a speed to replay.';
+      : 'Natural pen rhythm · choose a speed to replay.';
     for (const button of picker.querySelectorAll('[data-speed]')) {
       button.setAttribute('aria-pressed', String(Number(button.dataset.speed) === speed));
     }
@@ -82,7 +82,7 @@ if (logo) {
       button.type = 'button';
       button.dataset.speed = value;
       const label = document.createElement('span');
-      label.textContent = value === 1 ? '1× · Original' : `${value}×`;
+      label.textContent = value === 1 ? '1× · Unhurried' : `${value}×`;
       const duration = document.createElement('span');
       duration.className = 'speed-duration';
       duration.textContent = `${(data.duration / value).toFixed(1)}s`;
