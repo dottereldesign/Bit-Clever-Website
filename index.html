@@ -71,6 +71,14 @@
       width: 100%;
       height: auto;
     }
+    .hero__brand[data-handwriting="waiting"] .hero__logo { clip-path: inset(0 65.35% 0 0); }
+    .hero__brand[data-handwriting="playing"] .hero__logo { visibility: hidden; }
+    .hero__handwriting { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .hero__handwriting[hidden] { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .hero__brand[data-handwriting] .hero__logo { clip-path: none; visibility: visible; }
+      .hero__handwriting { display: none; }
+    }
 
     .noise-picker { position: fixed; right: 8px; bottom: 8px; z-index: 10; font: 14px/1.4 Arial,sans-serif; color: #eef4ff; }
     .noise-picker summary { cursor: pointer; padding: 12px 16px; border: 1px solid #ffffff40; border-radius: 12px; background: #123433ed; }
@@ -100,6 +108,7 @@
   </style>
   <script type="module" src="./assets/hero-background.js"></script>
   <script type="module" src="./assets/logo-animation.js"></script>
+  <noscript><style>.hero__brand[data-handwriting] .hero__logo { clip-path: none; }</style></noscript>
 </head>
 <body>
   <header class="site-header">
@@ -108,8 +117,8 @@
   </header>
   <main class="hero" aria-label="Bit Clever">
     <canvas class="hero__background" aria-hidden="true"></canvas>
-    <button class="hero__brand" type="button" aria-label="Replay Bit Clever handwriting animation" title="Click to replay the handwriting">
-      <img class="hero__logo" src="./assets/bit-clever-logo-animated.svg" width="456" height="130" alt="" draggable="false">
+    <button class="hero__brand" data-handwriting="waiting" type="button" aria-label="Replay Bit Clever handwriting animation" title="Click to replay the handwriting">
+      <img class="hero__logo" src="./assets/bit-clever-logo-white.svg" width="456" height="130" alt="" draggable="false">
     </button>
   </main>
   <details class="noise-picker" hidden>

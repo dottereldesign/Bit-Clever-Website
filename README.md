@@ -27,7 +27,7 @@ it has no animation loop. CSS gradients provide a fallback without JavaScript.
 mint on the right, periwinkle at the bottom. Both axes of each gradient use the
 same height-based scale, preserving its shape instead of stretching or cropping
 away the right glow. A white header
-contains a placeholder wordmark and contact button (destination to be added).
+contains the black Bit Clever logo and contact button (destination to be added).
 
 ## Shared noise defaults
 
@@ -44,11 +44,38 @@ The hero's Clever lettering writes on once per page load. Click or keyboard-acti
 the hero logo to replay it. Bit and the header logo stay static. Pen travel starts
 at the C's upper-right terminal, follows the C bowl into the l loop, then the e,
 v, second e, and r exit. The C eyes appear after the last stroke. The sequence
-takes 5.2 seconds; reduced-motion preferences show the completed logo immediately.
+takes 5.65 seconds; reduced-motion preferences show the completed logo immediately.
 
-The stroke masks reveal the approved filled outlines rather than drawing a new
-font. Run `python tools/build-handwriting.py` after changing the white logo's
-source paths or the pen routes to regenerate `assets/bit-clever-logo-animated.svg`.
+The painter follows a variable-width pen route derived from the approved SVG.
+Each loop has a continuous rising stroke, turn, descending stroke, and exit.
+At intersections, explicit curves prevent the pen from following the wrong
+branch or swelling to the width of both strokes. Contour details appear only
+after the pen passes them. A final SVG clip keeps all ink inside the approved
+lettering. The rendered trail is cached, so each frame draws only new ink.
+The completed logo is the original static SVG.
+
+Open `http://127.0.0.1:4175/tools/handwriting-inspector.html` to step through all
+340 frames at 60 fps, scrub the timeline, play at quarter speed, or overlay the
+approved outline. The inspector uses the same painter as the website.
+
+Optional development tools require Python packages in `tools/requirements.txt`
+and Playwright with Chromium. Set `PLAYWRIGHT_MODULE` to an existing Playwright
+module path if it is not installed in this checkout. All browser checks are
+headless and do not interact with your mouse or browser windows.
+
+```powershell
+node tools/handwriting-qa.cjs outline
+python tools/build-handwriting.py
+node tools/handwriting-qa.cjs frames
+python tools/audit-handwriting.py
+node tools/check-handwriting.cjs
+```
+
+The generator writes `assets/handwriting-data.json`. The frame tool saves all
+340 frames at 4x logo resolution and contact sheets under `.local/handwriting-audit`.
+The pixel audit checks disconnected ink at three alpha thresholds, ink outside
+the final outline, and erased interior pixels. Review the contact sheets as well:
+pixel checks alone cannot establish natural pen order or a good-looking join.
 
 ## Reference calibration
 

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bit Clever handwriting inspector</title>
+<style>
+  *{box-sizing:border-box}body{margin:0;padding:24px;background:#102d2b;color:white;font:16px Arial}
+  main{max-width:1500px;margin:auto}h1{font-size:24px}canvas{display:block;width:100%;height:auto;background:#123433;border-radius:12px;margin:24px 0}
+  .controls{display:flex;gap:16px;align-items:center;flex-wrap:wrap}button{padding:10px 16px;cursor:pointer}input[type=range]{width:100%;margin:20px 0}output{font-variant-numeric:tabular-nums}p{color:#b6cdca}
+</style>
+<main><h1>Handwriting frame inspector</h1><p>60 frames per second. Step through every frame or play slowly. Pink outlines show the approved logo.</p>
+<canvas width="1824" height="520"></canvas>
+<input id="frame" type="range" min="0" max="339" value="0" step="1" aria-label="Animation frame">
+<div class="controls"><button id="previous">Previous frame</button><button id="play">Play / pause</button><button id="next">Next frame</button><label>Speed <select id="speed"><option value=".25">Quarter speed</option><option value=".5">Half speed</option><option value="1" selected>Normal</option></select></label><label><input id="outline" type="checkbox"> Outline overlay</label><output></output></div></main>
+<script type="module">
+import {createHandwritingPainter} from '../assets/handwriting-renderer.js';
+const [svg,data]=await Promise.all([fetch('../assets/bit-clever-logo-white.svg').then(r=>r.text()),fetch('../assets/handwriting-data.json').then(r=>r.json())]);
+const canvas=document.querySelector('canvas'),paint=createHandwritingPainter(canvas,svg,data),slider=document.querySelector('#frame');
+const update=()=>{paint(+slider.value/60,{outline:document.querySelector('#outline').checked});document.querySelector('output').textContent='Frame '+slider.value+' / 339 — '+(+slider.value/60).toFixed(3)+' s';};
+let playing=false,last=0,position=0;
+slider.oninput=()=>{position=+slider.value;update();};
+document.querySelector('#outline').onchange=update;
+document.querySelector('#previous').onclick=()=>{playing=false;slider.value=Math.max(0,+slider.value-1);position=+slider.value;update();};
+document.querySelector('#next').onclick=()=>{playing=false;slider.value=Math.min(339,+slider.value+1);position=+slider.value;update();};
+document.querySelector('#play').onclick=()=>{if(position>=339)position=0;playing=!playing;last=performance.now();};
+function tick(now){if(playing){position=Math.min(339,position+(now-last)*.06*+document.querySelector('#speed').value);slider.value=Math.floor(position);update();if(position>=339)playing=false;}last=now;requestAnimationFrame(tick);}requestAnimationFrame(tick);
+window.inspector={paint,canvas,data};update();
+</script></html>

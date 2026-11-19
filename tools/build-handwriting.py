@@ -1,85 +1,324 @@
-"""Build the hero's handwriting SVG from the approved static logo.
+"""Build pen data from the approved Clever SVG silhouette.
 
-The stroke masks follow pen travel, not the outer contour of the filled letters.
-Clipping each stroke to its own joining region prevents neighboring letters
-from appearing early when the broad brush passes a crossover.
+First run `node tools/handwriting-qa.cjs outline` to rasterize the SVG at 8x.
+The graph supplies stroke centres and widths. Explicit cubic bridges at
+crossovers preserve the current pen stroke instead of following the union
+of intersecting strokes. Contour recovery waits until the pen passes.
 """
+
 from pathlib import Path
+import heapq
+import json
 import re
-import xml.etree.ElementTree as ET
+import cv2
+import numpy as np
+from skimage.morphology import medial_axis
+from scipy.spatial import cKDTree
+from scipy.ndimage import gaussian_filter1d, map_coordinates
 
 ROOT = Path(__file__).resolve().parents[1]
-source = ET.fromstring((ROOT / 'assets/bit-clever-logo-white.svg').read_text(encoding='utf-8'))
-paths = source.findall('{http://www.w3.org/2000/svg}path')
-parts = re.findall(r'M[^M]+', paths[0].attrib['d'])
-# Approved source: Clever outline and counters, then B, i dot, t, i stem.
-assert len(parts) == 8
-clever = ' '.join(parts[:4])
-bit = ' '.join(parts[4:])
-# First two eye groups belong to B; the last two to C.
-groups = source.findall('{http://www.w3.org/2000/svg}g')
-assert len(groups) == 4
-def eye_markup(groups):
-    return ''.join(ET.tostring(g, encoding='unicode').replace('ns0:', '').replace(':ns0', '') for g in groups)
+S = 8
+outline = cv2.imread(str(ROOT / ".local/clever-outline.png"), 0)
+if outline is None:
+    raise FileNotFoundError("Run node tools/handwriting-qa.cjs outline first.")
+assert outline.shape == (1080, 2360), "The reference outline must be rendered at 8x."
+mask = outline > 127
+distance = cv2.distanceTransform(
+    mask.astype("uint8"), cv2.DIST_L2, cv2.DIST_MASK_PRECISE
+)
+sk = medial_axis(mask, rng=0)
+full_skeleton = sk.copy()
 
-# name, pen centreline, brush width, clipping limits, delay, duration (seconds).
-strokes = [
-    ('C', 'M291 83 C304 79 314 59 299 47 C279 30 251 48 235 72 C221 92 216 119 233 133 C245 144 261 142 277 137', 30, 210, 315, .35, 1.13),
-    ('C-exit', 'M277 137 C286 134 295 129 302 125', 10, 210, 315, 1.48, .17),
-    # l is a counterclockwise loop: thin rising entry on the right, curl
-    # over the apex, then a heavier descending stem and exit on the left.
-    ('l-up', 'M298 127 C310 120 330 102 335 86 C340 73 329 74 324 82', 9, 298, 343, 1.65, .40),
-    ('l-down', 'M324 82 C315 93 306 115 310 128 C314 141 331 134 341 120', 24, 300, 343, 2.05, .26),
-    ('e-first', 'M340 120 C351 119 367 106 362 99 C351 87 334 109 342 127 C350 142 368 130 373 121', 23, 338, 374, 2.31, .51),
-    ('v', 'M373 121 C375 113 377 104 377 99 C374 114 374 134 385 132 C397 129 405 104 403 97 C400 89 394 101 403 110 C408 117 414 117 418 116', 25, 372, 417, 2.82, .57),
-    ('e-second', 'M418 116 C431 116 444 105 437 98 C426 87 414 110 420 125 C428 143 448 128 458 110', 23, 415, 450, 3.39, .51),
-    ('r', 'M451 118 C460 104 466 85 458 82 C451 80 455 96 465 94 C483 87 483 100 476 110 C455 139 477 145 494 116', 20, 448, 503, 3.90, .72),
+
+# Remove short leaf branches caused by the traced contour's tiny irregularities.
+def neighbours(p):
+    y, x = p
+    return [
+        (y + dy, x + dx)
+        for dy in [-1, 0, 1]
+        for dx in [-1, 0, 1]
+        if (dy or dx)
+        and 0 <= y + dy < sk.shape[0]
+        and 0 <= x + dx < sk.shape[1]
+        and sk[y + dy, x + dx]
+    ]
+
+
+for _ in range(3):
+    ends = [tuple(p) for p in np.argwhere(sk) if len(neighbours(tuple(p))) == 1]
+    for start in ends:
+        chain = [start]
+        prev = None
+        p = start
+        while len(chain) < S * 5:
+            nxt = [q for q in neighbours(p) if q != prev]
+            if len(nxt) != 1:
+                break
+            prev, p = p, nxt[0]
+            chain.append(p)
+        if len(chain) < S * 5 and len(neighbours(p)) >= 3:
+            for q in chain[:-1]:
+                sk[q] = False
+pixels = np.argwhere(sk)
+tree = cKDTree(pixels)
+ids = {tuple(p): i for i, p in enumerate(pixels)}
+graph = []
+for p in pixels:
+    graph.append(
+        [(ids[q], np.linalg.norm(p - np.array(q))) for q in neighbours(tuple(p))]
+    )
+
+
+def route(start, end):
+    if start == end:
+        return [start]
+    queue = [(0, start)]
+    best = {start: 0}
+    prior = {}
+    while queue:
+        cost, i = heapq.heappop(queue)
+        if i == end:
+            result = [i]
+            while i != start:
+                i = prior[i]
+                result.append(i)
+            return result[::-1]
+        if cost > best[i]:
+            continue
+        for j, w in graph[i]:
+            n = cost + w
+            if n < best.get(j, 1e99):
+                best[j] = n
+                prior[j] = i
+                heapq.heappush(queue, (n, j))
+    raise RuntimeError("Disconnected skeleton")
+
+
+guides = [
+    (
+        "C",
+        "M291 83 C304 79 310 59 299 47 C279 30 251 48 235 72 C221 92 216 119 233 133 C251 149 280 138 298 127",
+    ),
+    (
+        "l",
+        "M298 127 C310 120 330 102 335 86 C340 73 329 74 324 82 C315 93 306 115 310 128 C314 141 331 134 341 120",
+    ),
+    (
+        "e1",
+        "M341 120 C351 119 367 106 362 99 C351 87 334 109 342 127 C350 142 368 130 373 121",
+    ),
+    (
+        "v",
+        "M373 121 C375 113 377 104 377 99 C374 114 374 134 385 132 C397 129 405 104 403 97 C400 89 394 101 403 110 C408 117 414 117 418 116",
+    ),
+    (
+        "e2",
+        "M418 116 C431 116 444 105 437 98 C426 87 414 110 420 125 C428 143 448 128 458 110",
+    ),
+    (
+        "r",
+        "M458 110 C460 104 466 85 458 82 C451 80 455 96 465 94 C483 87 483 100 476 110 C455 139 477 145 494 116",
+    ),
 ]
-definitions = []
-mask_paths = []
-entry_paths = []
-for name, d, width, left, right, delay, duration in strokes:
-    boundary = f'<rect x="{left}" y="25" width="{right-left}" height="135"/>'
-    definitions.append(f'<clipPath id="clip-{name}">{boundary}</clipPath>')
-    if name in ('C-exit', 'l-up'):
-        # A real pen ribbon at the crossover avoids prematurely exposing the
-        # shared downstroke's outline. It is replaced by the exact filled
-        # joining region as the descending stroke completes.
-        entry_width = 12 if name == 'C-exit' else 10.5
-        entry_paths.append(f'<path class="pen entry" data-letter="{name}" pathLength="1" d="{d}" stroke-width="{entry_width}" style="--delay:{delay}s;--duration:{duration}s"/>')
-    else:
-        mask_paths.append(f'<path class="pen" data-letter="{name}" pathLength="1" d="{d}" stroke-width="{width}" clip-path="url(#clip-{name})" style="--delay:{delay}s;--duration:{duration}s"/>')
-definitions.append('<clipPath id="finished-loop"><path d="M210 25H344V97L332 114L340 134V160H210Z"/></clipPath>')
-mask_paths.append('<g class="loop-finish" clip-path="url(#finished-loop)"><rect x="210" y="25" width="134" height="135" fill="white"/></g>')
-
-svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="52 28 456 130" fill="none" role="img" aria-labelledby="logo-title">
-<title id="logo-title">Bit Clever</title>
-<desc>Clever writes on from the top-right tip of C through the connected letters to the r. Its eyes appear after the writing.</desc>
-<style>
-  .pen {{ fill:none;stroke:white;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1 1.01;stroke-dashoffset:1;opacity:0;animation:write var(--duration) linear calc(var(--delay) - var(--seek, 0s)) forwards; }}
-  .entries {{ animation:hide-entry .01s linear calc(2.32s - var(--seek, 0s)) forwards; }}
-  .loop-finish {{ opacity:0;animation:complete-loop .01s linear calc(2.31s - var(--seek, 0s)) forwards; }}
-  @keyframes hide-entry {{ to {{opacity:0}} }}
-  @keyframes complete-loop {{ to {{opacity:1}} }}
-  .script {{ animation:finish .01s linear calc(4.64s - var(--seek, 0s)) forwards; }}
-  .eyes {{ opacity:0;transform-box:fill-box;transform-origin:center;animation:eyes .38s cubic-bezier(.2,.8,.2,1) calc(4.82s - var(--seek, 0s)) forwards; }}
-  @keyframes write {{ 0% {{opacity:1;stroke-dashoffset:1}} 100% {{opacity:1;stroke-dashoffset:0}} }}
-  @keyframes finish {{ to {{mask:none}} }}
-  @keyframes eyes {{ from {{opacity:0;transform:translateY(2px) scale(.8)}} to {{opacity:1;transform:translateY(0) scale(1)}} }}
-  @media (prefers-reduced-motion:reduce) {{ .script {{mask:none;animation:none}} .eyes {{opacity:1;animation:none}} .pen {{animation:none}} .entries {{display:none}} }}
-</style>
-<defs>
-{''.join(definitions)}
-<mask id="handwriting" maskUnits="userSpaceOnUse" x="210" y="25" width="295" height="135" style="mask-type:luminance">
-{''.join(mask_paths)}
-</mask>
-</defs>
-<path fill="#fff" fill-rule="evenodd" d="{bit}"/>
-{eye_markup(groups[:2])}
-<path class="script" mask="url(#handwriting)" fill="#fff" fill-rule="evenodd" d="{clever}"/>
-<g class="entries">{''.join(entry_paths)}</g>
-<g class="eyes">{eye_markup(groups[2:])}</g>
-</svg>
-'''
-(ROOT / 'assets/bit-clever-logo-animated.svg').write_text(svg, encoding='utf-8')
-print('Built handwriting animation: C > l > e > v > e > r > eyes (5.2 seconds).')
+result = []
+last = None
+for label, d in guides:
+    commands = re.findall(r"([MC])([^MC]+)", d)
+    samples = []
+    for cmd, v in commands:
+        nums = np.array(list(map(float, v.split()))).reshape(-1, 2)
+        if cmd == "M":
+            point = nums[0]
+            samples.append(point)
+            continue
+        p1, p2, p3 = nums
+        t = np.linspace(0, 1, 100)[:, None]
+        b = (
+            (1 - t) ** 3 * point
+            + 3 * (1 - t) ** 2 * t * p1
+            + 3 * (1 - t) * t * t * p2
+            + t**3 * p3
+        )
+        samples.extend(b[1:])
+        point = p3
+    sampleids = tree.query([(np.array(p) - [210, 25])[::-1] * S for p in samples])[1]
+    ordered = []
+    for node in sampleids:
+        if last is None:
+            ordered.append(int(node))
+        else:
+            ordered.extend(route(last, int(node))[1:])
+        last = int(node)
+    coords = pixels[ordered][:, ::-1] / S + [210, 25]
+    # Average the raster skeleton gently; width is recomputed inside the true outline.
+    coords = gaussian_filter1d(coords, 3, axis=0, mode="nearest")
+    rs = (
+        map_coordinates(
+            distance, [(coords[:, 1] - 25) * S, (coords[:, 0] - 210) * S], order=1
+        )
+        / S
+    )
+    for p, r in zip(coords, rs):
+        result.append([*p, max(0.05, r + 0.18), label])
+out = []
+for p in result:
+    if not out or np.linalg.norm(np.array(p[:2]) - np.array(out[-1][:2])) > 0.23:
+        out.append(p)
+# At crossings the medial axis follows the union of BOTH strokes. A pen must
+# instead continue smoothly along its current stroke, without visiting the
+# junction branches or widening to the combined stroke's inscribed circle.
+base = np.array([p[:2] for p in out])
+base_lengths = np.r_[0, np.cumsum(np.linalg.norm(np.diff(base, axis=0), axis=1))]
+base_times = 0.3 + base_lengths / base_lengths[-1] * 4.8
+crossings = [
+    (1.55, 1.75, [302, 123], [314, 116]),
+    (2.13, 2.27, [307, 113], [305, 121]),
+    (2.40, 2.53, [339, 122], [349, 118]),
+    (2.77, 2.89, [340, 116], [339, 123]),
+    (3.02, 3.14, [376, 117], [379.5, 112]),
+    (3.20, 3.35, [378.5, 114], [377.5, 120]),
+    (3.64, 3.73, [405, 108], [407, 111]),
+    (3.73, 3.85, [417, 113], [424, 113]),
+    (4.11, 4.22, [417, 112], [416.5, 120]),
+]
+for start, end, c1, c2 in reversed(crossings):
+    a = int(np.argmin(abs(base_times - start)))
+    b = int(np.argmin(abs(base_times - end)))
+    p0 = np.array(out[a][:2])
+    p3 = np.array(out[b][:2])
+    r0 = out[a][2]
+    r3 = out[b][2]
+    ts = np.linspace(0, 1, max(2, round((end - start) * 800)))
+    replacement = []
+    for t in ts:
+        p = (
+            (1 - t) ** 3 * p0
+            + 3 * (1 - t) ** 2 * t * np.array(c1)
+            + 3 * (1 - t) * t * t * np.array(c2)
+            + t**3 * p3
+        )
+        radius = (1 - t) * r0 + t * r3
+        inside = (
+            map_coordinates(distance, [[(p[1] - 25) * S], [(p[0] - 210) * S]], order=1)[
+                0
+            ]
+            / S
+            + 0.18
+        )
+        label = out[min(b, a + round(t * (b - a)))][3]
+        replacement.append([*p, min(radius, inside), label])
+    out[a : b + 1] = replacement
+# The v reverses direction at its rounded terminal, rather than stopping at
+# the short branch pruned from the skeleton and letting a detail disk grow
+# a second bump there later.
+tip = min(
+    (i for i, p in enumerate(out) if p[3] == "v" and p[0] < 390),
+    key=lambda i: out[i][1],
+)
+origin = np.array(out[tip][:2])
+terminal = np.array([381.25, 94.375])
+turn = []
+for f in np.r_[np.linspace(0, 1, 28), np.linspace(1, 0, 28)[1:]]:
+    p = origin * (1 - f) + terminal * f
+    r = (
+        map_coordinates(distance, [[(p[1] - 25) * S], [(p[0] - 210) * S]], order=1)[0]
+        / S
+        + 0.18
+    )
+    turn.append([*p, r, "v"])
+out[tip : tip + 1] = turn
+# Continue to the actual r terminal, including the short tapered leaf that
+# graph pruning deliberately removes from the body of the stroke.
+origin = np.array(out[-1][:2])
+terminal = np.array([497.375, 113])
+for f in np.linspace(0, 1, 24)[1:]:
+    p = origin * (1 - f) + terminal * f
+    r = (
+        map_coordinates(distance, [[(p[1] - 25) * S], [(p[0] - 210) * S]], order=1)[0]
+        / S
+        + 0.18
+    )
+    out.append([*p, r, "r"])
+# Rounded/tapered terminals are slightly noncircular in the source. A small,
+# smoothly tapered overscan reaches those contours; the vector clip keeps
+# them exact. These isolated caps cannot expose a neighboring stroke.
+caps = [
+    (294.4, 85.5, 0.9, 5),
+    (381.25, 94.375, 0.45, 4),
+    (403.8, 96, 0.65, 5),
+    (458, 84.5, 0.7, 5),
+    (497.375, 113, 0.6, 3),
+]
+for p in out:
+    p[2] += sum(
+        pad * np.exp(-((p[0] - x) ** 2 + (p[1] - y) ** 2) / (2 * spread**2))
+        for x, y, pad, spread in caps
+    )
+# Draw the full disk union and measure coverage.
+raster = np.zeros(mask.shape, "uint8")
+for x, y, r, _ in out:
+    cv2.circle(
+        raster,
+        (round((x - 210) * S), round((y - 25) * S)),
+        max(1, round(r * S)),
+        255,
+        -1,
+    )
+print(
+    "skeleton",
+    len(pixels),
+    "path",
+    len(out),
+    "coverage",
+    np.sum((raster > 0) & mask) / mask.sum(),
+    "overscan pixels before SVG clipping",
+    np.sum((raster > 0) & ~mask),
+)
+# Supplemental medial disks recover contour details without broad masks.
+# Their centres are already inside the main trail, so growing them cannot
+# produce detached components. Crossovers use the LAST covering stroke.
+full_points = np.argwhere(full_skeleton)
+centres = np.array([p[:2] for p in out])
+radii = np.array([p[2] for p in out])
+lengths = np.r_[0, np.cumsum(np.linalg.norm(np.diff(centres, axis=0), axis=1))]
+times = 0.3 + lengths / lengths[-1] * 4.8
+extra = []
+index = cKDTree(centres)
+for y, x in full_points[::2]:
+    point = np.array([x / S + 210, y / S + 25])
+    r = max(0.01, float(distance[y, x] / S) + 0.18)
+    candidates = index.query_ball_point(point, float(radii.max() + r))
+    covers = [
+        i for i in candidates if np.linalg.norm(centres[i] - point) < radii[i] - 0.12
+    ]
+    if not covers:
+        continue
+    # Skip disks already covered by a main disk; they add no new outline.
+    if any(np.linalg.norm(centres[i] - point) + r < radii[i] + 0.12 for i in covers):
+        continue
+    overlapping = [
+        i for i in candidates if np.linalg.norm(centres[i] - point) < radii[i] + r
+    ]
+    start = float(times[max(overlapping)])
+    extra.append([float(point[0]), float(point[1]), r, start])
+data = {
+    "route": [
+        [round(float(x), 3), round(float(y), 3), round(float(r), 3), round(float(t), 4)]
+        for (x, y, r, _), t in zip(out, times)
+    ],
+    "details": [[round(v, 4) for v in p] for p in extra],
+    "duration": 5.65,
+    "inkEnd": 5.3,
+    "letters": {
+        label: [
+            float(times[[p[3] for p in out].index(label)]),
+            float(times[len(out) - 1 - [p[3] for p in out][::-1].index(label)]),
+        ]
+        for label, _ in guides
+    },
+}
+(ROOT / "assets/handwriting-data.json").write_text(
+    json.dumps(data, separators=(",", ":"))
+)
+print("details", len(extra), "route length", lengths[-1], data["letters"])
+cv2.imwrite(str(ROOT / ".local/disk-coverage.png"), raster)
