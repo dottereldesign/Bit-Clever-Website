@@ -29,14 +29,16 @@ same height-based scale, preserving its shape instead of stretching or cropping
 away the right glow. A white header
 contains the black Bit Clever logo and contact button (destination to be added).
 
-## Shared noise defaults
+## Appearance controls
 
-In the local preview, adjust a preset and its sliders, then click **Save as default**.
-This writes `assets/noise-defaults.json` in the checkout. Commit and push that file
-to `main` to publish the settings to GitHub Pages. Saving alone does not push Git.
-The button is local-only; the public static site cannot write repository files.
-Published default revisions override stale browser tuning, while local draft
-settings remain available for further adjustment.
+The circular button sits 8px from the bottom and right. Its panel contains only
+three dropdowns: eye entrance, drawing speed, and noise. Defaults are Playful
+wiggle, 3�, and Whisper. All six eye entrances, six speeds, and ten noise presets
+remain available. Choices persist in each browser. These new defaults replace
+older saved preferences once; subsequent selections are remembered.
+
+Noise defaults live in `assets/noise-defaults.json`. The former sliders and save
+button are removed from the minimal panel.
 
 ## Hero handwriting
 
@@ -44,10 +46,8 @@ The hero's Clever lettering writes on once per page load. Click or keyboard-acti
 the hero logo to replay it. Bit and the header logo stay static. Pen travel starts
 at the C's upper-right terminal, follows the C bowl into the l loop, then the e,
 v, second e, and r exit. The C eyes appear after the last stroke. The sequence
-takes about 2.8 seconds at the default 2× speed. The **Drawing** menu above the
-noise controls offers 1×, 1.5×, 2×, 2.5×, 3×, and 4×. Selecting one
-immediately replays the animation and remembers the choice in that browser.
-The stroke route and eye order stay the same at every speed. Reduced-motion
+takes about 2.5 seconds at the default 3� speed, including the eye entrance.
+Changing the eye or speed dropdown replays it immediately. Reduced-motion
 preferences show the completed logo immediately.
 
 All six speeds use the same natural pen rhythm. The C builds into a broad sweep,
@@ -106,4 +106,4 @@ the same exposed patches, and `--report path/to/report.json` to save the results
 The script's sampling mask is specific to this reference. If the fitted palette
 changes substantially, also update the fallback gradients in `index.html`.
 
-The **Eyes** selector offers Cute bump (default), One then the other, Wake-up blink, Float up, Playful wiggle, and Soft fade. Choices replay immediately and persist in the browser. Eyes enter only after the writing finishes, with a separate 0.7-second finish at every drawing speed. Reduced motion keeps the completed logo still.
+The eye dropdown offers Cute bump, One then the other, Wake-up blink, Float up, Playful wiggle, and Soft fade. Choices replay immediately and persist in the browser. Eyes enter only after the writing finishes, with a separate 0.7-second finish at every drawing speed. Reduced motion keeps the completed logo still.

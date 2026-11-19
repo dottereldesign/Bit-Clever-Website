@@ -80,31 +80,13 @@
       .hero__handwriting { display: none; }
     }
 
-    .noise-picker { position: fixed; right: 8px; bottom: 8px; z-index: 10; font: 14px/1.4 Arial,sans-serif; color: #eef4ff; }
-    .noise-picker summary { cursor: pointer; padding: 12px 16px; border: 1px solid #ffffff40; border-radius: 12px; background: #123433ed; }
-    .noise-options { position: absolute; right: 0; bottom: calc(100% + 8px); width: 260px; max-width: calc(100vw - 16px); max-height: calc(100svh - 80px); overflow: auto; padding: 6px; border-radius: 14px; background: #123433f5; box-shadow: 0 10px 36px #001b1940; }
-    .noise-options button { display: block; width: 100%; min-height: 40px; padding: 9px 12px; border: 0; border-radius: 8px; text-align: left; font: inherit; color: inherit; background: transparent; cursor: pointer; }
-    .noise-options button:hover { background: #ffffff12; }
-    .noise-options button[aria-pressed="true"] { background: #99ace540; }
-    .noise-picker :focus-visible { outline: 2px solid #d5e0ff; outline-offset: 2px; }
-
-    .eye-picker { position: fixed; right: 8px; bottom: 120px; z-index: 10; padding: 10px 12px; border: 1px solid #ffffff40; border-radius: 12px; background: #123433ed; color: #eef4ff; font: 14px/1.4 Arial,sans-serif; }
-    .eye-picker select { max-width: 165px; margin-left: 8px; padding: 3px; background: #123433; color: white; border: 0; font: inherit; }
-    .speed-picker { position: fixed; right: 8px; bottom: 64px; z-index: 11; font: 14px/1.4 Arial,sans-serif; color: #eef4ff; }
-    .speed-picker summary { cursor: pointer; padding: 12px 16px; border: 1px solid #ffffff40; border-radius: 12px; background: #123433ed; }
-    .speed-options { position: absolute; right: 0; bottom: calc(100% + 8px); width: 260px; max-width: calc(100vw - 16px); max-height: calc(100svh - 136px); overflow: auto; padding: 6px; border-radius: 14px; background: #123433f5; box-shadow: 0 10px 36px #001b1940; }
-    .speed-options p { margin: 6px 12px 10px; color: #c7d6ff; font-size: 12px; }
-    .speed-options button { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; min-height: 44px; padding: 9px 12px; border: 0; border-radius: 8px; text-align: left; font: inherit; color: inherit; background: transparent; cursor: pointer; }
-    .speed-options button:hover { background: #ffffff12; }
-    .speed-options button[aria-pressed="true"] { background: #99ace540; }
-    .speed-duration { color: #c7d6ff; font-variant-numeric: tabular-nums; }
-    .speed-picker :focus-visible { outline: 2px solid #d5e0ff; outline-offset: 2px; }
-
-    .noise-tuning { padding: 10px 12px 14px; border-bottom: 1px solid #ffffff25; margin-bottom: 6px; }
-    .noise-tuning label { display: flex; justify-content: space-between; margin-top: 8px; }
-    .noise-tuning output { color: #c7d6ff; font-variant-numeric: tabular-nums; }
-    .noise-tuning input { display: block; width: 100%; height: 28px; margin: 4px 0; accent-color: #99ace5; cursor: pointer; }
-
+    .settings { position: fixed; right: 8px; bottom: 8px; z-index: 20; font: 14px Arial,sans-serif; }
+    .settings summary { list-style: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid #ffffff55; color: white; background: #123433ed; cursor: pointer; }
+    .settings summary::-webkit-details-marker { display: none; }
+    .settings-panel { position: absolute; right: 0; bottom: 52px; width: 220px; max-width: calc(100vw - 16px); padding: 8px; display: grid; gap: 4px; border: 1px solid #ffffff25; border-radius: 16px; background: #123433f5; box-shadow: 0 8px 24px #001b1920; }
+    .settings select { width: 100%; min-height: 40px; padding: 8px 10px; border: 0; border-radius: 8px; color: #fff; background: #ffffff0a; font: inherit; cursor: pointer; color-scheme: dark; }
+    .settings option { background: #123433; }
+    .settings :focus-visible { outline: 2px solid #99ace5; outline-offset: 2px; }
     .site-header { height: 72px; margin-bottom: 8px; padding: 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #fff; font-family: Arial, sans-serif; }
     .site-logo { display: block; flex: 0 1 180px; min-width: 0; text-decoration: none; }
     .site-logo img { display: block; width: 100%; height: auto; }
@@ -112,11 +94,6 @@
     .contact-cta:hover { background: #333; }
     .site-header :focus-visible { outline: 2px solid #526ab4; outline-offset: 4px; }
     @media (max-width: 480px) { .site-logo { flex-basis: 144px; } .contact-cta { gap: 16px; } }
-    #save-noise-default { margin-top: 8px; background: #99ace5; color: #123433; text-align: center; font-weight: 600; }
-    #save-noise-default[hidden] { display: none; }
-    #save-noise-default:disabled { opacity: .5; }
-    #save-noise-status { font-size: 12px; margin: 8px 0 0; }
-    #save-noise-status:empty { display: none; }
   </style>
   <script type="module" src="./assets/hero-background.js"></script>
   <script type="module" src="./assets/logo-animation.js"></script>
@@ -133,27 +110,18 @@
       <img class="hero__logo" src="./assets/bit-clever-logo-white.svg" width="456" height="130" alt="" draggable="false">
     </button>
   </main>
-  <label class="eye-picker" hidden>Eyes<select id="eye-style" aria-label="C eye animation"></select></label>
-  <details class="speed-picker" hidden>
-    <summary>Drawing: <span id="drawing-speed">2×</span></summary>
-    <div class="speed-options">
-      <p id="speed-help">Choose a speed to replay.</p>
-      <div class="speed-presets" role="group" aria-label="Drawing speed" aria-describedby="speed-help"></div>
+  <details class="settings">
+    <summary aria-label="Appearance settings" title="Appearance settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="#123433"/><circle cx="15" cy="17" r="3" fill="#123433"/></svg></summary>
+    <div class="settings-panel">
+      <select id="eye-style" aria-label="Eye animation"></select>
+      <select id="drawing-speed" aria-label="Drawing speed"></select>
+      <select id="noise-preset" aria-label="Noise effect"></select>
     </div>
   </details>
-  <details class="noise-picker" hidden>
-    <summary>Noise: <span id="noise-name">Original</span></summary>
-    <div class="noise-options">
-      <div class="noise-tuning" role="group" aria-label="Adjust noise">
-        <label for="noise-strength">Strength <output id="strength-value" for="noise-strength">100%</output></label>
-        <input id="noise-strength" type="range" min="0" max="4" step="0.05" value="1">
-        <label for="noise-size">Size <output id="size-value" for="noise-size">1.00x</output></label>
-        <input id="noise-size" type="range" min="0.25" max="4" step="0.05" value="1">
-        <button id="save-noise-default" type="button" hidden>Save as default</button>
-        <p id="save-noise-status" role="status"></p>
-      </div>
-      <div class="noise-presets" role="group" aria-label="Noise presets"></div>
-    </div>
-  </details>
+  <script type="module">
+    const menu = document.querySelector('.settings');
+    document.addEventListener('pointerdown', event => { if (!menu.contains(event.target)) menu.open = false; });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape' && menu.open) { menu.open = false; menu.querySelector('summary').focus(); } });
+  </script>
 </body>
 </html>

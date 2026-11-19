@@ -1,6 +1,6 @@
 import { HERO_FIELD as field } from './hero-field.js';
 
-let defaults = {preset: 0, strength: 1, size: 1, revision: 'initial'};
+let defaults = {preset: 1, strength: .45, size: 1, revision: 'minimal-v1'};
 try {
   const response = await fetch(new URL('./noise-defaults.json', import.meta.url), {cache: 'no-store'});
   if (response.ok) defaults = await response.json();
@@ -133,88 +133,30 @@ if (context) {
   new ResizeObserver(scheduleRender).observe(canvas);
   window.addEventListener('resize', scheduleRender, { passive: true });
 
-  const picker = document.querySelector('.noise-picker');
-  const options = picker.querySelector('.noise-presets');
-  const name = document.querySelector('#noise-name');
+  const select = document.querySelector('#noise-preset');
   selected = defaults.preset;
   strength = defaults.strength;
   grainSize = defaults.size;
   try {
     const saved = JSON.parse(localStorage.getItem('hero-noise-tuning'));
-    if (saved && (isLocal || saved.revision === defaults.revision) &&
-        Number.isInteger(saved.preset) && saved.preset >= 0 && saved.preset < variations.length) {
+    if (saved?.revision === defaults.revision && Number.isInteger(saved.preset) && variations[saved.preset]) {
       selected = saved.preset;
-      if (Number.isFinite(saved.strength)) strength = Math.max(0, Math.min(4, saved.strength));
-      if (Number.isFinite(saved.size)) grainSize = Math.max(.25, Math.min(4, saved.size));
+      strength = variations[selected].strength;
+      grainSize = variations[selected].size;
     }
   } catch {}
-  const strengthInput = document.querySelector('#noise-strength');
-  const sizeInput = document.querySelector('#noise-size');
-  const syncControls = () => {
-    strengthInput.value = strength;
-    sizeInput.value = grainSize;
-    document.querySelector('#strength-value').textContent = Math.round(strength * 100) + '%';
-    document.querySelector('#size-value').textContent = grainSize.toFixed(2) + 'x';
-    const modified = strength !== variations[selected].strength || grainSize !== variations[selected].size;
-    name.textContent = variations[selected].name + (modified ? ' (custom)' : '');
-  };
-  const saveTuning = () => {
+  variations.forEach((variation, index) => {
+    const option = document.createElement('option');
+    option.value = index; option.textContent = variation.name;
+    select.append(option);
+  });
+  select.value = selected;
+  select.addEventListener('change', () => {
+    selected = Number(select.value);
+    strength = variations[selected].strength;
+    grainSize = variations[selected].size;
     try { localStorage.setItem('hero-noise-tuning', JSON.stringify({preset: selected, strength, size: grainSize, revision: defaults.revision})); } catch {}
-  };
-  [strengthInput, sizeInput].forEach(input => input.addEventListener('input', () => {
-    strength = Number(strengthInput.value);
-    grainSize = Number(sizeInput.value);
-    syncControls();
-    saveTuning();
     scheduleRender();
-  }));
-  const buttons = variations.map((variation, index) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.textContent = variation.name;
-    button.setAttribute('aria-pressed', String(selected === index));
-    button.addEventListener('click', () => {
-      selected = index;
-      strength = variation.strength;
-      grainSize = variation.size;
-      syncControls();
-      saveTuning();
-      buttons.forEach((item, i) => item.setAttribute('aria-pressed', String(i === index)));
-      try { localStorage.setItem('hero-noise-variation', String(index)); } catch {}
-      scheduleRender();
-    });
-    options.append(button);
-    return button;
-  });
-  const saveButton = document.querySelector('#save-noise-default');
-  const saveStatus = document.querySelector('#save-noise-status');
-  saveButton.hidden = !isLocal;
-  saveButton.addEventListener('click', async () => {
-    saveButton.disabled = true;
-    saveStatus.textContent = 'Saving...';
-    try {
-      const response = await fetch('/__preview/noise-defaults', {
-        method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({preset: selected, strength, size: grainSize}),
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Save failed');
-      defaults = result;
-      saveTuning();
-      saveStatus.textContent = 'Saved to site files. Push to publish these defaults.';
-    } catch (error) { saveStatus.textContent = 'Could not save: ' + error.message; }
-    finally { saveButton.disabled = false; }
-  });
-  syncControls();
-  picker.hidden = false;
-  document.addEventListener('pointerdown', event => {
-    if (!picker.contains(event.target)) picker.open = false;
-  });
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && picker.open) {
-      picker.open = false;
-      picker.querySelector('summary').focus();
-    }
   });
   scheduleRender();
 }
