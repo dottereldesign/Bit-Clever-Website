@@ -86,7 +86,7 @@
     .settings { position: fixed; right: 8px; bottom: 8px; z-index: 20; font: 14px Arial,sans-serif; }
     .settings summary { list-style: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid #ffffff55; color: white; background: #123433ed; cursor: pointer; }
     .settings summary::-webkit-details-marker { display: none; }
-    .settings-panel { position: absolute; right: 0; bottom: 52px; width: 220px; max-width: calc(100vw - 16px); padding: 8px; display: grid; gap: 4px; border: 1px solid #ffffff25; border-radius: 16px; background: #123433f5; box-shadow: 0 8px 24px #001b1920; }
+    .settings-panel { max-height: calc(100dvh - 80px); overflow-y: auto; position: absolute; right: 0; bottom: 52px; width: 220px; max-width: calc(100vw - 16px); padding: 8px; display: grid; gap: 4px; border: 1px solid #ffffff25; border-radius: 16px; background: #123433f5; box-shadow: 0 8px 24px #001b1920; }
     .settings select { width: 100%; min-height: 40px; padding: 8px 10px; border: 0; border-radius: 8px; color: #fff; background: #ffffff0a; font: inherit; cursor: pointer; color-scheme: dark; }
     .settings option { background: #123433; }
     .settings :focus-visible { outline: 2px solid #99ace5; outline-offset: 2px; }
@@ -151,6 +151,7 @@
     <div class="settings-panel">
       <select id="it-size" aria-label="it size"></select>
       <select id="bit-style" aria-label="Bit entrance"></select>
+      <select id="bit-move-style" aria-label="B move style"></select>
       <select id="bit-move-speed" aria-label="B move speed"></select>
       <select id="eye-style" aria-label="Eye animation"></select>
       <select id="drawing-speed" aria-label="Drawing speed"></select>

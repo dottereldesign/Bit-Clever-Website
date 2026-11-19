@@ -1,12 +1,6 @@
+import { moveVariations, landingPose, poseAt, clamp } from './logo-motion.js';
+export { bitVariations, moveVariations } from './logo-motion.js';
 const ns = 'http://www.w3.org/2000/svg';
-export const bitVariations = {
-  reboundGlance: { name: 'Rebound + glance', drop: 1.2, slide: .9, bounce: 7, tilt: 0, glance: true },
-  soft: { name: 'Soft landing', drop: 1.05, slide: .85, bounce: 2, tilt: 0 },
-  spring: { name: 'Little rebound', drop: 1.2, slide: .95, bounce: 7, tilt: 0 },
-  glance: { name: 'Side glance', drop: 1.15, slide: .9, bounce: 3, tilt: 3, glance: true },
-  feather: { name: 'Feather drop', drop: 1.35, slide: 1.1, bounce: 1, tilt: -2 },
-};
-const smooth = t => t * t * t * (10 + t * (-15 + 6 * t));
 export function createBitIntro(host, svgText) {
   const source = new DOMParser().parseFromString(svgText, 'image/svg+xml');
   // Give the landing six extra logo units of space before C; final position stays fixed.
@@ -27,21 +21,18 @@ export function createBitIntro(host, svgText) {
   return {
     remove() { svg.remove(); },
     hide() { svg.style.display = 'none'; },
-    paint(wall, revealStart, variation, moveSpeed = 1) {
+    paint(wall, revealStart, variation, moveSpeed = 1, moveStyle = 'glance') {
       svg.style.display = 'block';
-      const p = bitVariations[variation];
-      const fall = Math.min(1, Math.max(0, wall / (p.drop * .64)));
-      const settle = Math.min(1, Math.max(0, (wall - p.drop * .64) / (p.drop * .36)));
-      const slide = Math.min(1, Math.max(0, (wall - revealStart) * moveSpeed / p.slide));
-      const shift = smooth(slide);
+      const motion = moveVariations[moveStyle];
+      const slide = clamp((wall - revealStart) * moveSpeed / motion.duration);
       const height = host.getBoundingClientRect().height;
       const distance = (host.closest('.hero').getBoundingClientRect().height / 2 + height) * 130 / height;
-      const fallingY = -distance * (1 - fall * fall);
-      const rebound = -p.bounce * Math.sin(Math.PI * settle) * (1 - settle);
-      const squash = .065 * Math.sin(Math.PI * Math.min(1, settle * 2)) * (1 - settle);
-      const angle = p.tilt * (1 - smooth(fall)) + (p.glance ? -2 * Math.sin(Math.PI * slide) : 0);
-      const y = fall < 1 ? fallingY : rebound;
-      const transform = `translate(${offset * (1 - shift)} ${y}) translate(${center} 141) rotate(${angle}) scale(${1 + squash} ${1 - squash}) translate(${-center} -141)`;
+      const [drift, landingY, landingScale, landingAngle] = landingPose(wall, variation, distance);
+      const [shift, moveY, moveScale, moveAngle] = poseAt(motion.frames, slide);
+      const sy = landingScale * moveScale;
+      // Compression bulges sideways; the gentler width response keeps letters legible.
+      const sx = 1 / Math.sqrt(sy);
+      const transform = `translate(${offset * (1 - shift) + drift} ${landingY + moveY}) translate(${center} 141) rotate(${landingAngle + moveAngle}) scale(${sx} ${sy}) translate(${-center} -141)`;
       b.setAttribute('transform', transform);
       occluder.setAttribute('transform', transform);
       // Letters use their final, fixed-size outlines. Only B moves across them.

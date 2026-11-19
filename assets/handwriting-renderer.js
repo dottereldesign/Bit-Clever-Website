@@ -1,3 +1,4 @@
+import { eyePose } from './logo-motion.js';
 // The site and frame inspector share this pen route and painter.
 export function createHandwritingPainter(canvas, svgText, data) {
   const source = new DOMParser().parseFromString(svgText, 'image/svg+xml');
@@ -112,25 +113,11 @@ export function createHandwritingPainter(canvas, svgText, data) {
     if (!inkOnly) {
       const progress = eyeProgress ?? (time - data.inkEnd - .08) / .27;
       for (const [index, eye] of eyes.slice(2).entries()) {
-        const delay = eyeStyle === 'stagger' ? index * .22 : 0;
-        const f = Math.max(0, Math.min(1, (progress - delay) / (1 - delay)));
-        if (f <= 0) continue;
-        const ease = 1 - (1 - f) ** 3;
-        let sx = 1, sy = 1, dy = 0, angle = 0;
-        context.globalAlpha = ease;
-        if (eyeStyle === 'bump' || eyeStyle === 'stagger') {
-          const pop = 1 + 2.5 * (f - 1) ** 3 + 1.5 * (f - 1) ** 2;
-          sx = sy = Math.max(.01, pop);
-        } else if (eyeStyle === 'blink') {
-          sy = Math.max(.02, ease * (1 - .88 * Math.exp(-(((f - .62) / .09) ** 2))));
-        } else if (eyeStyle === 'rise') {
-          dy = 12 * (1 - ease);
-        } else if (eyeStyle === 'wiggle') {
-          sx = sy = Math.max(.01, ease);
-          angle = Math.sin(f * Math.PI * 5) * .3 * (1 - f);
-        }
+        if (progress <= 0) continue;
+        const {sx, sy, dx, dy, angle, alpha} = eyePose(eyeStyle, progress, index);
+        context.globalAlpha = alpha;
         context.save();
-        context.translate(eye.x, eye.y + dy);
+        context.translate(eye.x + dx, eye.y + dy);
         context.rotate(angle);
         context.fillStyle = eye.color;
         context.beginPath();

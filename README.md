@@ -32,7 +32,7 @@ contains the black Bit Clever logo and contact button (destination to be added).
 ## Appearance controls
 
 The circular button sits 8px from the bottom and right. Its panel contains only
-seven dropdowns: it size, Bit entrance, B move speed, eye entrance, drawing speed, Coming soon entrance, and noise. Defaults are Playful
+eight dropdowns: it size, B landing, B move style, B move speed, eye entrance, drawing speed, Coming soon entrance, and noise. Defaults are Playful
 wiggle, 3x, and Whisper. All six eye entrances, six speeds, and ten noise presets
 remain available. Choices persist in each browser. These new defaults replace
 older saved preferences once; subsequent selections are remembered.
@@ -106,14 +106,24 @@ the same exposed patches, and `--report path/to/report.json` to save the results
 The script's sampling mask is specific to this reference. If the fitted palette
 changes substantially, also update the fallback gradients in `index.html`.
 
-The eye dropdown offers Cute bump, One then the other, Wake-up blink, Float up, Playful wiggle, and Soft fade. Choices replay immediately and persist in the browser. Eyes enter only after the writing finishes, with a separate 0.7-second finish at every drawing speed. Reduced motion keeps the completed logo still.
+The motion menu has three independent sets of ten presets:
 
-“Coming soon” sits below the hero logo and enters after the C eyes finish. Its six entrance presets are Gentle rise, Quiet fade, Focus in (default), Soft bounce, Typewriter, and Letter cascade. Selection replays the full sequence and is remembered. Reduced motion shows the message immediately.
+- **B landing:** Rubber bounce (default), Cartoon plop, Jelly wobble, Heavy squish,
+  Superball, Feather bounce, Pogo pop, Wobbly knees, Soft little boing, Corkscrew settle.
+- **C eyes:** Wake-up blink, Double take, Cheeky wink, Sleepy peek, Wide-eyed hello,
+  Happy squint, Cute bump, Knowing glance, Rubber blink, Playful wiggle (default).
+- **B move:** Side glance (default), Leap back, Spring back, Quick snap, Quick hop,
+  Elastic pullback, Skid to a stop, Wind-up release, Two little hops, Silky glide.
 
-The Bit entrance offers Rebound + glance (default), Soft landing, Little rebound, Side glance, and
-Feather drop. B lands beside C before the unchanged handwriting begins. After
-Clever and its eyes finish, B slides left to uncover “it” beneath a mask matching B’s exact silhouette. Coming
-soon follows the reveal. Reduced motion shows the complete static logo.
+Choices replay immediately and persist locally. B stretches during its accelerating
+fall, compresses on contact and rebounds with diminishing motion. Clever starts on
+first contact; its drawing path and pace are unchanged. Both C eyes start together
+0.08 seconds after the last pen stroke, finishing their entrance 0.62 seconds later.
+B then moves left, revealing the stationary it beneath a matching silhouette mask.
+All poses settle to the exact static artwork. Reduced motion shows the static logo.
+
+“Coming soon” follows the B reveal. Its six entrance presets are Gentle rise,
+Quiet fade, Focus in (default), Soft bounce, Typewriter, and Letter cascade.
 
 The it size menu offers 65%, 70%, 75%, 80% (default), and 85%. Every size
 keeps a 6-unit B–i gap and the original t–C spacing. The letters remain
@@ -122,3 +132,6 @@ The bottom of it aligns precisely with the bottom of B at every size.
 
 B lands six logo units farther left. Its independent move speed offers 1×,
 1.25×, 1.5× (default), 2×, and 2.5×, without changing landing or handwriting timing.
+
+`tools/check-bit-intro.cjs` samples each motion frame, validates all 30 presets and
+sequence timing, and saves 120 review frames under `.local/`.

@@ -1,4 +1,5 @@
-import { createBitIntro, bitVariations } from './bit-intro.js';
+import { eyeStyles } from './logo-motion.js';
+import { createBitIntro, bitVariations, moveVariations } from './bit-intro.js';
 import { createComingSoon } from './coming-soon.js';
 import { createHandwritingPainter } from './handwriting-renderer.js';
 
@@ -52,12 +53,12 @@ if (logo) {
     try { localStorage.setItem('bit-clever-move-speed', String(moveSpeed)); } catch {}
     play();
   });
-  let intro, wall = 0, variation = 'reboundGlance';
-  try { const saved = localStorage.getItem('bit-clever-intro-v2'); if (saved in bitVariations) variation = saved; } catch {}
+  let intro, wall = 0, variation = 'rubber';
+  try { const saved = localStorage.getItem('bit-clever-intro-v3'); if (saved in bitVariations) variation = saved; } catch {}
   const introSelect = document.querySelector('#bit-style');
-  for (const [value, item] of Object.entries(bitVariations)) { const option = document.createElement('option'); option.value = value; option.textContent = item.name; introSelect.append(option); }
+  for (const [value, item] of Object.entries(bitVariations)) { const option = document.createElement('option'); option.value = value; option.textContent = `B drop: ${item.name}`; introSelect.append(option); }
   introSelect.value = variation;
-  introSelect.addEventListener('change', () => { variation = introSelect.value; try { localStorage.setItem('bit-clever-intro-v2', variation); } catch {} play(); });
+  introSelect.addEventListener('change', () => { variation = introSelect.value; try { localStorage.setItem('bit-clever-intro-v3', variation); } catch {} play(); });
   let paint, data, request = 0, started = 0, elapsed = 0;
   const speeds = [1, 1.5, 2, 2.5, 3, 4];
   const storageKey = 'bit-clever-handwriting-speed-v2';
@@ -87,19 +88,28 @@ if (logo) {
       if (paint && !canvas.hidden) draw();
     }
   };
-  const eyeStyles = { bump: 'Cute bump', stagger: 'One, then the other', blink: 'Wake-up blink', rise: 'Float up', wiggle: 'Playful wiggle', fade: 'Soft fade' };
+  let moveStyle = 'glance';
+  try { const saved = localStorage.getItem('bit-clever-move-style'); if (saved in moveVariations) moveStyle = saved; } catch {}
+  const moveStyleSelect = document.querySelector('#bit-move-style');
+  for (const [value, item] of Object.entries(moveVariations)) moveStyleSelect.add(new Option(`B move: ${item.name}`, value));
+  moveStyleSelect.value = moveStyle;
+  moveStyleSelect.addEventListener('change', () => {
+    moveStyle = moveStyleSelect.value;
+    try { localStorage.setItem('bit-clever-move-style', moveStyle); } catch {}
+    play();
+  });
   let eyeStyle = 'wiggle';
   try { const saved = localStorage.getItem('bit-clever-eye-style-v2'); if (saved in eyeStyles) eyeStyle = saved; } catch {}
   let eyeProgress = 0;
   const writingDuration = () => (data.inkEnd - data.route[0][3]) / speed;
-  const revealAt = () => bitVariations[variation].drop * .64 + writingDuration() + .7;
+  const revealAt = () => bitVariations[variation].touchdown + writingDuration() + .7;
   const draw = () => {
     paint(elapsed, { eyeStyle, eyeProgress, hideBit: true });
-    intro.paint(wall, revealAt(), variation, moveSpeed);
+    intro.paint(wall, revealAt(), variation, moveSpeed, moveStyle);
   };
   const eyeSelect = document.querySelector('#eye-style');
   for (const [value, label] of Object.entries(eyeStyles)) {
-    const option = document.createElement('option'); option.value = value; option.textContent = label;
+    const option = document.createElement('option'); option.value = value; option.textContent = `C eyes: ${label}`;
     eyeSelect.append(option);
   }
   eyeSelect.value = eyeStyle;
@@ -110,11 +120,11 @@ if (logo) {
   });
   const tick = now => {
     wall = (now - started) / 1000;
-    const writing = Math.max(0, wall - bitVariations[variation].drop * .64);
-    elapsed = wall < bitVariations[variation].drop * .64 ? 0 : Math.min(data.inkEnd, data.route[0][3] + writing * speed);
+    const writing = Math.max(0, wall - bitVariations[variation].touchdown);
+    elapsed = wall < bitVariations[variation].touchdown ? 0 : Math.min(data.inkEnd, data.route[0][3] + writing * speed);
     eyeProgress = Math.max(0, Math.min(1, (writing - writingDuration() - .08) / .62));
     draw();
-    if (wall >= revealAt() + bitVariations[variation].slide / moveSpeed) finish();
+    if (wall >= revealAt() + moveVariations[moveStyle].duration / moveSpeed) finish();
     else request = requestAnimationFrame(tick);
   };
   const play = () => {
