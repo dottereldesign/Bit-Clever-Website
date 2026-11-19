@@ -33,7 +33,7 @@ const output = path.resolve(__dirname, '../.local/handwriting-audit');
       assert.equal(await page.locator(`.speed-presets [aria-pressed="true"]`).getAttribute('data-speed'), String(speed));
       await page.waitForFunction(() => document.querySelector('.hero__brand').dataset.handwriting === 'complete');
       const duration = Date.now() - started;
-      assert.ok(Math.abs(duration - 5650 / speed) < 600, `${speed}× took ${duration}ms`);
+      assert.ok(Math.abs(duration - (5300 / speed + 700)) < 600, `${speed}× took ${duration}ms`);
     }
     await page.reload();
     await page.waitForSelector('.speed-picker:not([hidden])');

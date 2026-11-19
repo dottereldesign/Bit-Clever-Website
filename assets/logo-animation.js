@@ -35,13 +35,32 @@ if (logo) {
     if (canvas.width !== width || canvas.height !== height) {
       canvas.width = width;
       canvas.height = height;
-      if (paint && !canvas.hidden) paint(elapsed);
+      if (paint && !canvas.hidden) draw();
     }
   };
+  const eyeStyles = { bump: 'Cute bump', stagger: 'One, then the other', blink: 'Wake-up blink', rise: 'Float up', wiggle: 'Playful wiggle', fade: 'Soft fade' };
+  let eyeStyle = 'bump';
+  try { const saved = localStorage.getItem('bit-clever-eye-style'); if (saved in eyeStyles) eyeStyle = saved; } catch {}
+  let eyeProgress = 0;
+  const draw = () => paint(elapsed, { eyeStyle, eyeProgress });
+  const eyePicker = document.querySelector('.eye-picker');
+  const eyeSelect = document.querySelector('#eye-style');
+  for (const [value, label] of Object.entries(eyeStyles)) {
+    const option = document.createElement('option'); option.value = value; option.textContent = label;
+    eyeSelect.append(option);
+  }
+  eyeSelect.value = eyeStyle;
+  eyeSelect.addEventListener('change', () => {
+    eyeStyle = eyeSelect.value;
+    try { localStorage.setItem('bit-clever-eye-style', eyeStyle); } catch {}
+    play();
+  });
   const tick = now => {
-    elapsed = Math.min(data.duration, (now - started) * speed / 1000);
-    paint(elapsed);
-    if (elapsed >= data.duration) finish();
+    const wall = (now - started) / 1000;
+    elapsed = Math.min(data.inkEnd, wall * speed);
+    eyeProgress = Math.max(0, Math.min(1, (wall - data.inkEnd / speed - .08) / .62));
+    draw();
+    if (eyeProgress >= 1) finish();
     else request = requestAnimationFrame(tick);
   };
   const play = () => {
@@ -49,7 +68,8 @@ if (logo) {
     cancelAnimationFrame(request);
     elapsed = 0;
     size();
-    paint(0);
+    eyeProgress = 0;
+    draw();
     canvas.hidden = false;
     replay.dataset.handwriting = 'playing';
     started = performance.now();
@@ -85,7 +105,7 @@ if (logo) {
       label.textContent = value === 1 ? '1× · Unhurried' : `${value}×`;
       const duration = document.createElement('span');
       duration.className = 'speed-duration';
-      duration.textContent = `${(data.duration / value).toFixed(1)}s`;
+      duration.textContent = `${(data.inkEnd / value + .7).toFixed(1)}s`;
       button.append(label, duration);
       button.addEventListener('click', () => {
         speed = value;
@@ -127,6 +147,7 @@ if (logo) {
     data = strokes;
     paint = createHandwritingPainter(canvas, svg, data);
     setupSpeedControls();
+    eyePicker.hidden = false;
     if (reducedMotion.matches) finish();
     else play();
   }).catch(error => {

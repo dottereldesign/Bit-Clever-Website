@@ -38,7 +38,7 @@ export function createHandwritingPainter(canvas, svgText, data) {
     brush.lineTo(b[0] + b[2] * nx, b[1] + b[2] * ny);
     brush.closePath();
   };
-  return function paint(time, { outline = false, inkOnly = false } = {}) {
+  return function paint(time, { outline = false, inkOnly = false, eyeStyle = "fade", eyeProgress } = {}) {
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.setTransform(canvas.width / 456, 0, 0, canvas.height / 130,
@@ -110,13 +110,33 @@ export function createHandwritingPainter(canvas, svgText, data) {
     context.restore();
     previousTime = time;
     if (!inkOnly) {
-      const f = Math.max(0, Math.min(1, (time - data.inkEnd - .08) / .27));
-      context.globalAlpha = f * f * (3 - 2 * f);
-      for (const eye of eyes.slice(2)) {
+      const progress = eyeProgress ?? (time - data.inkEnd - .08) / .27;
+      for (const [index, eye] of eyes.slice(2).entries()) {
+        const delay = eyeStyle === 'stagger' ? index * .22 : 0;
+        const f = Math.max(0, Math.min(1, (progress - delay) / (1 - delay)));
+        if (f <= 0) continue;
+        const ease = 1 - (1 - f) ** 3;
+        let sx = 1, sy = 1, dy = 0, angle = 0;
+        context.globalAlpha = ease;
+        if (eyeStyle === 'bump' || eyeStyle === 'stagger') {
+          const pop = 1 + 2.5 * (f - 1) ** 3 + 1.5 * (f - 1) ** 2;
+          sx = sy = Math.max(.01, pop);
+        } else if (eyeStyle === 'blink') {
+          sy = Math.max(.02, ease * (1 - .88 * Math.exp(-(((f - .62) / .09) ** 2))));
+        } else if (eyeStyle === 'rise') {
+          dy = 12 * (1 - ease);
+        } else if (eyeStyle === 'wiggle') {
+          sx = sy = Math.max(.01, ease);
+          angle = Math.sin(f * Math.PI * 5) * .3 * (1 - f);
+        }
+        context.save();
+        context.translate(eye.x, eye.y + dy);
+        context.rotate(angle);
         context.fillStyle = eye.color;
         context.beginPath();
-        context.ellipse(eye.x, eye.y, eye.rx * eye.scale, eye.ry * eye.scale, 0, 0, Math.PI * 2);
+        context.ellipse(0, 0, eye.rx * eye.scale * sx, eye.ry * eye.scale * sy, 0, 0, Math.PI * 2);
         context.fill();
+        context.restore();
       }
       context.globalAlpha = 1;
     }

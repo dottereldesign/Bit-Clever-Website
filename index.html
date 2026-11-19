@@ -88,6 +88,8 @@
     .noise-options button[aria-pressed="true"] { background: #99ace540; }
     .noise-picker :focus-visible { outline: 2px solid #d5e0ff; outline-offset: 2px; }
 
+    .eye-picker { position: fixed; right: 8px; bottom: 120px; z-index: 10; padding: 10px 12px; border: 1px solid #ffffff40; border-radius: 12px; background: #123433ed; color: #eef4ff; font: 14px/1.4 Arial,sans-serif; }
+    .eye-picker select { max-width: 165px; margin-left: 8px; padding: 3px; background: #123433; color: white; border: 0; font: inherit; }
     .speed-picker { position: fixed; right: 8px; bottom: 64px; z-index: 11; font: 14px/1.4 Arial,sans-serif; color: #eef4ff; }
     .speed-picker summary { cursor: pointer; padding: 12px 16px; border: 1px solid #ffffff40; border-radius: 12px; background: #123433ed; }
     .speed-options { position: absolute; right: 0; bottom: calc(100% + 8px); width: 260px; max-width: calc(100vw - 16px); max-height: calc(100svh - 136px); overflow: auto; padding: 6px; border-radius: 14px; background: #123433f5; box-shadow: 0 10px 36px #001b1940; }
@@ -131,6 +133,7 @@
       <img class="hero__logo" src="./assets/bit-clever-logo-white.svg" width="456" height="130" alt="" draggable="false">
     </button>
   </main>
+  <label class="eye-picker" hidden>Eyes<select id="eye-style" aria-label="C eye animation"></select></label>
   <details class="speed-picker" hidden>
     <summary>Drawing: <span id="drawing-speed">2×</span></summary>
     <div class="speed-options">

@@ -105,3 +105,5 @@ Pass `--render path/to/screenshot.png` to measure a 795Ã—648 browser render a
 the same exposed patches, and `--report path/to/report.json` to save the results.
 The script's sampling mask is specific to this reference. If the fitted palette
 changes substantially, also update the fallback gradients in `index.html`.
+
+The **Eyes** selector offers Cute bump (default), One then the other, Wake-up blink, Float up, Playful wiggle, and Soft fade. Choices replay immediately and persist in the browser. Eyes enter only after the writing finishes, with a separate 0.7-second finish at every drawing speed. Reduced motion keeps the completed logo still.
