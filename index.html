@@ -80,6 +80,9 @@
       .hero__handwriting { display: none; }
     }
 
+    .hero__message { position: absolute; z-index: 1; top: calc(50% + min(156.8px, 13.12cqw, 29.94cqh) + 18px); left: 0; width: 100%; margin: 0; text-align: center; color: white; font: 500 clamp(12px, 1.3vw, 16px)/1.4 Arial,sans-serif; letter-spacing: .22em; text-transform: uppercase; }
+    .coming-soon { display: inline-block; opacity: 0; }
+    .coming-soon > span { display: inline-block; white-space: pre; }
     .settings { position: fixed; right: 8px; bottom: 8px; z-index: 20; font: 14px Arial,sans-serif; }
     .settings summary { list-style: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid #ffffff55; color: white; background: #123433ed; cursor: pointer; }
     .settings summary::-webkit-details-marker { display: none; }
@@ -97,7 +100,7 @@
   </style>
   <script type="module" src="./assets/hero-background.js"></script>
   <script type="module" src="./assets/logo-animation.js"></script>
-  <noscript><style>.hero__brand[data-handwriting] .hero__logo { clip-path: none; }</style></noscript>
+  <noscript><style>.hero__brand[data-handwriting] .hero__logo { clip-path: none; }.coming-soon { opacity: 1; }</style></noscript>
 </head>
 <body>
   <header class="site-header">
@@ -109,12 +112,14 @@
     <button class="hero__brand" data-handwriting="waiting" type="button" aria-label="Replay Bit Clever handwriting animation" title="Click to replay the handwriting">
       <img class="hero__logo" src="./assets/bit-clever-logo-white.svg" width="456" height="130" alt="" draggable="false">
     </button>
+    <p class="hero__message"><span class="coming-soon">Coming soon</span></p>
   </main>
   <details class="settings">
     <summary aria-label="Appearance settings" title="Appearance settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="#123433"/><circle cx="15" cy="17" r="3" fill="#123433"/></svg></summary>
     <div class="settings-panel">
       <select id="eye-style" aria-label="Eye animation"></select>
       <select id="drawing-speed" aria-label="Drawing speed"></select>
+      <select id="coming-style" aria-label="Coming soon entrance"></select>
       <select id="noise-preset" aria-label="Noise effect"></select>
     </div>
   </details>

@@ -32,7 +32,7 @@ contains the black Bit Clever logo and contact button (destination to be added).
 ## Appearance controls
 
 The circular button sits 8px from the bottom and right. Its panel contains only
-three dropdowns: eye entrance, drawing speed, and noise. Defaults are Playful
+four dropdowns: eye entrance, drawing speed, Coming soon entrance, and noise. Defaults are Playful
 wiggle, 3x, and Whisper. All six eye entrances, six speeds, and ten noise presets
 remain available. Choices persist in each browser. These new defaults replace
 older saved preferences once; subsequent selections are remembered.
@@ -107,3 +107,5 @@ The script's sampling mask is specific to this reference. If the fitted palette
 changes substantially, also update the fallback gradients in `index.html`.
 
 The eye dropdown offers Cute bump, One then the other, Wake-up blink, Float up, Playful wiggle, and Soft fade. Choices replay immediately and persist in the browser. Eyes enter only after the writing finishes, with a separate 0.7-second finish at every drawing speed. Reduced motion keeps the completed logo still.
+
+“Coming soon” sits below the hero logo and enters after the C eyes finish. Its six entrance presets are Gentle rise (default), Quiet fade, Focus in, Soft bounce, Typewriter, and Letter cascade. Selection replays the full sequence and is remembered. Reduced motion shows the message immediately.

@@ -1,3 +1,4 @@
+import { createComingSoon } from './coming-soon.js';
 import { createHandwritingPainter } from './handwriting-renderer.js';
 
 const replay = document.querySelector('.hero__brand');
@@ -5,6 +6,7 @@ const logo = replay?.querySelector('.hero__logo');
 
 if (logo) {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const message = createComingSoon(reducedMotion, () => play());
   const canvas = document.createElement('canvas');
   canvas.className = 'hero__handwriting';
   canvas.setAttribute('aria-hidden', 'true');
@@ -24,6 +26,7 @@ if (logo) {
     request = 0;
     canvas.hidden = true;
     replay.dataset.handwriting = 'complete';
+    message.show();
   };
   const size = () => {
     const rect = logo.getBoundingClientRect();
@@ -63,6 +66,7 @@ if (logo) {
   const play = () => {
     if (reducedMotion.matches || !paint) return;
     cancelAnimationFrame(request);
+    message.reset();
     elapsed = 0;
     size();
     eyeProgress = 0;
