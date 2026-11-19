@@ -23,6 +23,8 @@ const fs = require('node:fs');
   assert.deepEqual(config.issues,[]);
   for(const id of ['bit-style','bit-move-style','eye-style'])assert.equal(await page.locator(`#${id} option`).count(),10);
   assert.equal(await page.locator('#bit-style').inputValue(),'rubber');
+  assert.equal(await page.locator('#bit-move-style').inputValue(),'leap');
+  await page.selectOption('#bit-move-style','glance',{force:true});
   await page.selectOption('#bit-move-speed','1',{force:true});
   let start=0; const records=[];
   const step=async t=>page.evaluate(t=>window.step(t),(start+t)*1000);

@@ -112,7 +112,7 @@ The motion menu has three independent sets of ten presets:
   Superball, Feather bounce, Pogo pop, Wobbly knees, Soft little boing, Corkscrew settle.
 - **C eyes:** Wake-up blink, Double take, Cheeky wink, Sleepy peek, Wide-eyed hello,
   Happy squint, Cute bump, Knowing glance, Rubber blink, Playful wiggle (default).
-- **B move:** Side glance (default), Leap back, Spring back, Quick snap, Quick hop,
+- **B move:** Side glance, Leap back (default), Spring back, Quick snap, Quick hop,
   Elastic pullback, Skid to a stop, Wind-up release, Two little hops, Silky glide.
 
 Choices replay immediately and persist locally. B stretches during its accelerating

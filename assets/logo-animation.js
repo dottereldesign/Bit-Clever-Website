@@ -88,14 +88,14 @@ if (logo) {
       if (paint && !canvas.hidden) draw();
     }
   };
-  let moveStyle = 'glance';
-  try { const saved = localStorage.getItem('bit-clever-move-style'); if (saved in moveVariations) moveStyle = saved; } catch {}
+  let moveStyle = 'leap';
+  try { const saved = localStorage.getItem('bit-clever-move-style-v2'); if (saved in moveVariations) moveStyle = saved; } catch {}
   const moveStyleSelect = document.querySelector('#bit-move-style');
   for (const [value, item] of Object.entries(moveVariations)) moveStyleSelect.add(new Option(`B move: ${item.name}`, value));
   moveStyleSelect.value = moveStyle;
   moveStyleSelect.addEventListener('change', () => {
     moveStyle = moveStyleSelect.value;
-    try { localStorage.setItem('bit-clever-move-style', moveStyle); } catch {}
+    try { localStorage.setItem('bit-clever-move-style-v2', moveStyle); } catch {}
     play();
   });
   let eyeStyle = 'wiggle';
