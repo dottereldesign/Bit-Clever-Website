@@ -39,11 +39,16 @@
 
     .noise-picker { position: fixed; right: 8px; bottom: 8px; z-index: 10; font: 14px/1.4 Arial,sans-serif; color: #eef4ff; }
     .noise-picker summary { cursor: pointer; padding: 12px 16px; border: 1px solid #ffffff40; border-radius: 12px; background: #123433ed; }
-    .noise-options { position: absolute; right: 0; bottom: calc(100% + 8px); width: 220px; max-width: calc(100vw - 16px); max-height: calc(100svh - 80px); overflow: auto; padding: 6px; border-radius: 14px; background: #123433f5; box-shadow: 0 10px 36px #001b1940; }
+    .noise-options { position: absolute; right: 0; bottom: calc(100% + 8px); width: 260px; max-width: calc(100vw - 16px); max-height: calc(100svh - 80px); overflow: auto; padding: 6px; border-radius: 14px; background: #123433f5; box-shadow: 0 10px 36px #001b1940; }
     .noise-options button { display: block; width: 100%; min-height: 40px; padding: 9px 12px; border: 0; border-radius: 8px; text-align: left; font: inherit; color: inherit; background: transparent; cursor: pointer; }
     .noise-options button:hover { background: #ffffff12; }
     .noise-options button[aria-pressed="true"] { background: #99ace540; }
     .noise-picker :focus-visible { outline: 2px solid #d5e0ff; outline-offset: 2px; }
+
+    .noise-tuning { padding: 10px 12px 14px; border-bottom: 1px solid #ffffff25; margin-bottom: 6px; }
+    .noise-tuning label { display: flex; justify-content: space-between; margin-top: 8px; }
+    .noise-tuning output { color: #c7d6ff; font-variant-numeric: tabular-nums; }
+    .noise-tuning input { display: block; width: 100%; height: 28px; margin: 4px 0; accent-color: #99ace5; cursor: pointer; }
   </style>
   <script type="module" src="./assets/hero-background.js"></script>
 </head>
@@ -53,7 +58,15 @@
   </main>
   <details class="noise-picker" hidden>
     <summary>Noise: <span id="noise-name">Original</span></summary>
-    <div class="noise-options" role="group" aria-label="Noise variations"></div>
+    <div class="noise-options">
+      <div class="noise-tuning" role="group" aria-label="Adjust noise">
+        <label for="noise-strength">Strength <output id="strength-value" for="noise-strength">100%</output></label>
+        <input id="noise-strength" type="range" min="0" max="4" step="0.05" value="1">
+        <label for="noise-size">Size <output id="size-value" for="noise-size">1.00x</output></label>
+        <input id="noise-size" type="range" min="0.25" max="4" step="0.05" value="1">
+      </div>
+      <div class="noise-presets" role="group" aria-label="Noise presets"></div>
+    </div>
   </details>
 </body>
 </html>
