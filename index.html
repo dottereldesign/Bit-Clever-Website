@@ -13,6 +13,8 @@
       padding: 8px;
     }
     .hero {
+      display: grid;
+      place-items: center;
       position: relative;
       isolation: isolate;
       width: 100%;
@@ -51,11 +53,8 @@
       pointer-events: none;
     }
     .hero__brand {
-      position: absolute;
+      position: relative;
       z-index: 1;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
       width: min(1100px, 92cqw, 210cqh);
       aspect-ratio: 456 / 130;
       user-select: none;

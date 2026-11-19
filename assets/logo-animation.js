@@ -77,9 +77,10 @@ if (logo) {
   };
   const size = () => {
     const rect = logo.getBoundingClientRect();
-    const scale = Math.min(2, window.devicePixelRatio || 1);
-    const width = Math.max(1, Math.round(rect.width * scale));
-    const height = Math.max(1, Math.round(rect.height * scale));
+    // Match high-density phones instead of upscaling a capped 2x bitmap.
+    const scale = Math.max(2, window.devicePixelRatio || 1);
+    const width = Math.max(1, Math.ceil(rect.width * scale));
+    const height = Math.max(1, Math.ceil(rect.height * scale));
     if (canvas.width !== width || canvas.height !== height) {
       canvas.width = width;
       canvas.height = height;
@@ -135,6 +136,15 @@ if (logo) {
   });
   replay.addEventListener('click', play);
   new ResizeObserver(size).observe(replay);
+  // A monitor/zoom change can alter pixel density without changing CSS size.
+  let densityQuery;
+  const watchDensity = () => {
+    densityQuery?.removeEventListener('change', densityChanged);
+    densityQuery = matchMedia(`(resolution: ${window.devicePixelRatio || 1}dppx)`);
+    densityQuery.addEventListener('change', densityChanged);
+  };
+  const densityChanged = () => { size(); watchDensity(); };
+  watchDensity();
   if (reducedMotion.matches) finish();
 
   function setupSpeedControls() {
