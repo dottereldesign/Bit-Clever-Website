@@ -50,17 +50,32 @@
       display: block;
       pointer-events: none;
     }
-    .hero__character {
+    .hero__brand {
       position: absolute;
       z-index: 1;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      width: min(300px, 56cqw, 44cqh);
+      width: min(1100px, 92cqw, 210cqh);
+      aspect-ratio: 648 / 216;
+      pointer-events: none;
+      user-select: none;
+    }
+    .hero__character {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 23.765432%;
       height: auto;
       display: block;
-      user-select: none;
-      pointer-events: none;
+    }
+    .hero__wordmark {
+      position: absolute;
+      left: 27.469136%;
+      top: 3.703704%;
+      width: 72.530864%;
+      height: auto;
+      display: block;
     }
 
     .noise-picker { position: fixed; right: 8px; bottom: 8px; z-index: 10; font: 14px/1.4 Arial,sans-serif; color: #eef4ff; }
@@ -97,7 +112,10 @@
   </header>
   <main class="hero" aria-label="Bit Clever">
     <canvas class="hero__background" aria-hidden="true"></canvas>
-    <img class="hero__character" src="./assets/bit-clever-character.svg" width="154" height="216" alt="White B character with black eyes and little feet, standing over a soft shadow" draggable="false">
+    <div class="hero__brand" role="img" aria-label="Bit Clever: a white B character beside the Clever script wordmark, both with black eyes">
+      <img class="hero__character" src="./assets/bit-clever-character.svg" width="154" height="216" alt="" draggable="false">
+      <img class="hero__wordmark" src="./assets/clever-wordmark.svg" width="1264" height="478" alt="" draggable="false">
+    </div>
   </main>
   <details class="noise-picker" hidden>
     <summary>Noise: <span id="noise-name">Original</span></summary>
