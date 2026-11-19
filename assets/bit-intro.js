@@ -40,11 +40,8 @@ export function createBitIntro(host, svgText) {
       const transform = `translate(${76 * (1 - shift)} ${y}) translate(97 141) rotate(${angle}) scale(${1 + squash} ${1 - squash}) translate(-97 -141)`;
       b.setAttribute('transform', transform);
       occluder.setAttribute('transform', transform);
-      // Tuck the letters fully inside B before they emerge. They gently expand
-      // to their original geometry beneath the moving silhouette, never a wipe.
+      // Letters use their final, fixed-size outlines. Only B moves across them.
       letters.setAttribute('visibility', slide > 0 ? 'visible' : 'hidden');
-      const unfold = .55 + .45 * shift;
-      letters.setAttribute('transform', `translate(172 96) scale(${unfold}) translate(-172 -96)`);
     },
   };
 }

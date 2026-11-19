@@ -14,6 +14,7 @@ const assert=require('node:assert/strict');
  await p.screenshot({path:`.local/bit-${v}-land.png`});
  await advance(reveal-.01);assert.equal(await p.locator('.hidden-it').getAttribute('visibility'),'hidden');
  await advance(reveal+slide*.55);assert.equal(await p.locator('.hidden-it').getAttribute('visibility'),'visible');assert.equal(await p.locator('.b-occluder').getAttribute('transform'),await p.locator('.falling-b').getAttribute('transform'));
+ assert.equal(await p.locator('.hidden-it').getAttribute('transform'),null);
  await p.screenshot({path:`.local/bit-${v}-reveal.png`});
  await advance(reveal+slide+.02);assert.equal(await p.locator('.hero__brand').getAttribute('data-handwriting'),'complete');
  start+=reveal+slide+.02;
