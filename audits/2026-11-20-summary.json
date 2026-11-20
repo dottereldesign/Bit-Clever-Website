@@ -1,0 +1,199 @@
+{
+  "date": "2026-11-20",
+  "url": "https://dottereldesign.github.io/Bit-Clever-Website/",
+  "baselineCommit": "7bfa3fb",
+  "optimizedCommit": "bee42b4",
+  "lighthouseVersion": "13.6.0",
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+  "runsPerProfilePerStage": 3,
+  "method": "Headless CLI, default simulated mobile/desktop throttling, isolated fresh profiles, sequential runs. Lab data, not field Core Web Vitals.",
+  "results": {
+    "stable-before/mobile": {
+      "scores": {
+        "performance": [
+          91,
+          88,
+          86
+        ],
+        "accessibility": [
+          100,
+          100,
+          100
+        ],
+        "best-practices": [
+          96,
+          96,
+          96
+        ],
+        "seo": [
+          91,
+          91,
+          91
+        ]
+      },
+      "metrics": {
+        "first-contentful-paint": 907.2975,
+        "largest-contentful-paint": 1296.2975000000001,
+        "speed-index": 1259.5022822852657,
+        "total-blocking-time": 488.0000000000001,
+        "cumulative-layout-shift": 0
+      },
+      "transferred": 96036
+    },
+    "stable-before/desktop": {
+      "scores": {
+        "performance": [
+          100,
+          99,
+          99
+        ],
+        "accessibility": [
+          100,
+          100,
+          100
+        ],
+        "best-practices": [
+          96,
+          96,
+          96
+        ],
+        "seo": [
+          91,
+          91,
+          91
+        ]
+      },
+      "metrics": {
+        "first-contentful-paint": 263.8005,
+        "largest-contentful-paint": 350.98,
+        "speed-index": 492.04049666555187,
+        "total-blocking-time": 84,
+        "cumulative-layout-shift": 0
+      },
+      "transferred": 96067
+    },
+    "stable-after/mobile": {
+      "scores": {
+        "performance": [
+          98,
+          100,
+          100
+        ],
+        "accessibility": [
+          100,
+          100,
+          100
+        ],
+        "best-practices": [
+          100,
+          100,
+          100
+        ],
+        "seo": [
+          100,
+          100,
+          100
+        ]
+      },
+      "metrics": {
+        "first-contentful-paint": 1091.828,
+        "largest-contentful-paint": 1255.458,
+        "speed-index": 1243.4236212169155,
+        "total-blocking-time": 66.00000000000011,
+        "cumulative-layout-shift": 0
+      },
+      "transferred": 83799
+    },
+    "stable-after/desktop": {
+      "scores": {
+        "performance": [
+          100,
+          100,
+          100
+        ],
+        "accessibility": [
+          100,
+          100,
+          100
+        ],
+        "best-practices": [
+          100,
+          100,
+          100
+        ],
+        "seo": [
+          100,
+          100,
+          100
+        ]
+      },
+      "metrics": {
+        "first-contentful-paint": 253.213,
+        "largest-contentful-paint": 295.402,
+        "speed-index": 382.67636257604534,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0
+      },
+      "transferred": 83727
+    }
+  },
+  "viewports": [
+    [
+      320,
+      568
+    ],
+    [
+      375,
+      812
+    ],
+    [
+      390,
+      844
+    ],
+    [
+      480,
+      800
+    ],
+    [
+      768,
+      1024
+    ],
+    [
+      1024,
+      768
+    ],
+    [
+      1050,
+      720
+    ],
+    [
+      1051,
+      720
+    ],
+    [
+      1280,
+      800
+    ],
+    [
+      1440,
+      900
+    ],
+    [
+      1920,
+      1080
+    ],
+    [
+      844,
+      390
+    ]
+  ],
+  "verified": [
+    "30 motion options and settled endpoints",
+    "Original motion curves, timings and pen geometry unchanged",
+    "Nine byte-identical background comparisons",
+    "No JS, reduced motion and Worker fallback",
+    "Placeholder CTAs remain inert",
+    "No horizontal overflow, header collisions or offscreen controls in tested layouts"
+  ],
+  "hostingLimit": "GitHub-managed cache headers/CDN latency remain unchanged; no paid infrastructure added."
+}
