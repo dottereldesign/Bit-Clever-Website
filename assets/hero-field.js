@@ -13,5 +13,5 @@ export const HERO_FIELD = Object.freeze({
     radiusX: 0.295590, radiusY: 0.276292,
     opacity: 0.853161, falloff: 1.825499,
   },
-  grain: { seed: 27011991, deviation: 3.3, fadePower: 0.7, mint: 0.35 },
+  grain: { seed: 27011991, deviation: 3.3, mint: 0.35 },
 });

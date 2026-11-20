@@ -3,10 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bit Clever Website</title>
+  <title>Bit Clever — Coming Soon</title>
+  <meta name="description" content="Bit Clever is coming soon. Explore our animated identity while we prepare to share our services, pricing and portfolio.">
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="./assets/handwriting-data.json" as="fetch" crossorigin>
+  <link rel="preload" href="./assets/bit-clever-logo-white.svg" as="fetch" crossorigin>
   <meta name="theme-color" content="#ffffff">
   <style>
     * { box-sizing: border-box; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
     html { background: #fff; --header-height: 72px; }
     body {
       margin: 0;
@@ -52,6 +57,7 @@
       display: block;
       pointer-events: none;
     }
+    .hero__background:not([data-rendered]) { visibility: hidden; }
     .hero__brand {
       position: relative;
       z-index: 1;
@@ -122,7 +128,7 @@
   </style>
   <script type="module" src="./assets/hero-background.js"></script>
   <script type="module" src="./assets/logo-animation.js"></script>
-  <noscript><style>.hero__brand[data-handwriting] .hero__logo { clip-path: none; visibility: visible; }.coming-soon { opacity: 1; }</style></noscript>
+  <noscript><style>.settings { display: none; }.hero__brand[data-handwriting] .hero__logo { clip-path: none; visibility: visible; }.coming-soon { opacity: 1; }</style></noscript>
 </head>
 <body>
   <header class="site-header">
@@ -140,9 +146,10 @@
     </div>
   </header>
   <main class="hero" aria-label="Bit Clever">
+    <h1 class="visually-hidden">Bit Clever — Coming soon</h1>
     <canvas class="hero__background" aria-hidden="true"></canvas>
     <button class="hero__brand" data-handwriting="waiting" type="button" aria-label="Replay Bit Clever handwriting animation" title="Click to replay the handwriting">
-      <img class="hero__logo" src="./assets/bit-clever-logo-white.svg" width="456" height="130" alt="" draggable="false">
+      <img class="hero__logo" src="./assets/bit-clever-logo-white.svg" width="456" height="130" alt="" draggable="false" fetchpriority="high">
     </button>
     <p class="hero__message"><span class="coming-soon">Coming soon</span></p>
   </main>

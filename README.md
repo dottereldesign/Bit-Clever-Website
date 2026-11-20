@@ -12,18 +12,18 @@ Alternatively, run `node tools/preview-server.cjs` and open that URL. The server
 binds only to this computer, and the shortcut reuses it on subsequent launches.
 This is full-page live reload, not framework component hot replacement.
 
-A fullscreen, background-only hero matching the supplied Apollo reference. Serve
+A fullscreen hero with the Bit Clever identity and a background matching the supplied Apollo reference. Serve
 this directory with any static web server; no build step or runtime dependencies
 are needed. GitHub Pages serves `main` directly.
 
 The background uses a measured petrol-to-periwinkle elliptical fade, a mint glow
 at the right edge, and deterministic monochrome grain. The grain is softened by a
-2Ã—2 filter and fades with the colour field. It stays the same size in CSS pixels
+2×2 filter and fades with the colour field. It stays the same size in CSS pixels
 across device resolutions. The canvas redraws when dimensions or noise settings change;
 it has no animation loop. CSS gradients provide a fallback without JavaScript.
 
 `assets/hero-field.js` contains the colour and grain controls, and
-`assets/hero-background.js` renders them. The colour regions stay anchored to the hero: petrol at the top,
+`assets/hero-background.js` coordinates a module worker (`hero-worker.js` / `hero-raster.js`) that renders them without blocking the logo animation. A main-thread fallback supports browsers without workers. The colour regions stay anchored to the hero: petrol at the top,
 mint on the right, periwinkle at the bottom. Both axes of each gradient use the
 same height-based scale, preserving its shape instead of stretching or cropping
 away the right glow. A white header
@@ -33,7 +33,7 @@ contains the black Bit Clever logo and contact button (destination to be added).
 
 The circular button sits 8px from the bottom and right. Its panel contains only
 eight dropdowns: it size, B landing, B move style, B move speed, eye entrance, drawing speed, Coming soon entrance, and noise. Defaults are Playful
-wiggle, 3x, and Whisper. All six eye entrances, six speeds, and ten noise presets
+wiggle, 3x, and Whisper. All ten eye entrances, six drawing speeds, and ten noise presets
 remain available. Choices persist in each browser. These new defaults replace
 older saved preferences once; subsequent selections are remembered.
 
@@ -43,10 +43,10 @@ button are removed from the minimal panel.
 ## Hero handwriting
 
 The hero's Clever lettering writes on once per page load. Click or keyboard-activate
-the hero logo to replay it. Bit and the header logo stay static. Pen travel starts
+the hero logo to replay it. The header logo stays static; B lands first and moves left after the writing and eye entrance. Pen travel starts
 at the C's upper-right terminal, follows the C bowl into the l loop, then the e,
 v, second e, and r exit. The C eyes appear after the last stroke. The sequence
-takes about 2.5 seconds at the default 3x speed, including the eye entrance.
+takes about 3.6 seconds with the default landing, 3x drawing and 1.5x leap.
 Changing the eye or speed dropdown replays it immediately. Reduced-motion
 preferences show the completed logo immediately.
 
@@ -90,7 +90,7 @@ pixel checks alone cannot establish natural pen order or a good-looking join.
 
 ## Reference calibration
 
-The optional offline tool fits the colours from 1,281 unobstructed 9Ã—9 patches.
+The optional offline tool fits the colours from 1,281 unobstructed 9×9 patches.
 It excludes the person, lettering, cards, grid lines, and black left gutter. It
 reports a separate 20% holdout result before fitting all patches. The original
 reference image is not distributed in this repository. Hidden areas are a smooth
@@ -101,7 +101,7 @@ python -m pip install -r tools/requirements.txt
 python tools/calibrate-hero.py --reference "path/to/original-961x648.png" --output assets/hero-field.js
 ```
 
-Pass `--render path/to/screenshot.png` to measure a 795Ã—648 browser render against
+Pass `--render path/to/screenshot.png` to measure a 795×648 browser render against
 the same exposed patches, and `--report path/to/report.json` to save the results.
 The script's sampling mask is specific to this reference. If the fitted palette
 changes substantially, also update the fallback gradients in `index.html`.
@@ -119,7 +119,7 @@ Choices replay immediately and persist locally. B stretches during its accelerat
 fall, compresses on contact and rebounds with diminishing motion. Clever starts on
 first contact; its drawing path and pace are unchanged. Both C eyes start together
 0.08 seconds after the last pen stroke, finishing their entrance 0.62 seconds later.
-B then moves left, revealing the stationary it beneath a matching silhouette mask.
+B then moves left, revealing the stationary it under the opaque B using SVG paint order.
 All poses settle to the exact static artwork. Reduced motion shows the static logo.
 
 “Coming soon” follows the B reveal. Its six entrance presets are Gentle rise,
@@ -135,3 +135,24 @@ B lands six logo units farther left. Its independent move speed offers 1×,
 
 `tools/check-bit-intro.cjs` samples each motion frame, validates all 30 presets and
 sequence timing, and saves 120 review frames under `.local/`.
+
+## Performance audit tools
+
+The site has no runtime packages or build step. Audit tools are optional and use
+headless Chrome; they do not control your mouse or existing tabs.
+
+- `tools/run-lighthouse.ps1`: three sequential mobile and desktop runs against the
+  live URL, writing JSON and HTML into `.local/`. Pass `-Stage stable-before` or
+  `-Stage stable-after`. It accepts paths to Node, Lighthouse and Chrome.
+- `tools/summarize-lighthouse.py`: generate the local HTML audit summary from those
+  matched reports and `.local/responsive-after.json`.
+- `tools/audit-responsive.cjs [url] [output.json]`: twelve viewport checks, including
+  placeholder buttons, overflow, header spacing and the settings panel.
+- `tools/check-background.cjs`: compare background pixels with the accepted
+  pre-audit renderer and check the worker fallback.
+
+Lighthouse 13.6.0 requires Node 22.19 or newer. This audit used an isolated Node
+22.21.1 and Lighthouse install inside ignored `.local/audit-runtime`; no global
+Node settings or production dependencies were changed. The Playwright checks use
+`PLAYWRIGHT_MODULE` to resolve an existing install, or the `playwright` package.
+The final scores are lab results, not field Core Web Vitals.

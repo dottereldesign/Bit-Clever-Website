@@ -85,7 +85,7 @@ def export_field(parameters, destination):
         'dark': p[0:3], 'periwinkle': p[3:6], 'mint': p[6:9],
         'fade': dict(zip(['x', 'y', 'aspect', 'inner', 'outer'], p[9:14])),
         'glow': dict(zip(['x', 'y', 'radiusX', 'radiusY', 'opacity', 'falloff'], p[14:20])),
-        'grain': {'seed': 27011991, 'deviation': 3.3, 'fadePower': .7, 'mint': .35},
+        'grain': {'seed': 27011991, 'deviation': 3.3, 'mint': .35},
     }
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(

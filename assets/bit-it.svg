@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 216" fill="#fff">
-  <title>it</title>
-  <desc>Bold coding-style lowercase i and t, with a square bit for the dot of the i.</desc>
-  <!-- Monospaced, slab-ended forms align with the B's body baseline. -->
-  <rect x="31" y="39" width="22" height="22"/>
-  <path d="M9 79H53V142H65V163H8V142H31V100H9Z"/>
-  <path d="M97 50H119V79H139V100H119V139L122 142H139V163H113L97 147V100H77V79H97Z"/>
-</svg>

@@ -5,6 +5,7 @@ import { createHandwritingPainter } from './handwriting-renderer.js';
 
 const replay = document.querySelector('.hero__brand');
 const logo = replay?.querySelector('.hero__logo');
+const logoFile = (color, size) => `bit-clever-logo-${color}${size === 80 ? '' : `-${size}`}.svg`;
 
 if (logo) {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -23,16 +24,17 @@ if (logo) {
   let sizeRequest = 0;
   const setArtwork = (svg) => {
     intro?.remove();
+    lastPaint = null;
     paint = createHandwritingPainter(canvas, svg, data);
     intro = createBitIntro(replay, svg);
-    logo.src = `./assets/bit-clever-logo-white-${itSize}.svg`;
-    document.querySelector('.site-logo img').src = `./assets/bit-clever-logo-black-${itSize}.svg`;
+    logo.src = `./assets/${logoFile('white', itSize)}`;
+    document.querySelector('.site-logo img').src = `./assets/${logoFile('black', itSize)}`;
   };
   itSelect.addEventListener('change', async () => {
     const token = ++sizeRequest;
     const selected = Number(itSelect.value);
     try {
-      const response = await fetch(new URL(`./bit-clever-logo-white-${selected}.svg`, import.meta.url));
+      const response = await fetch(new URL(`./${logoFile('white', selected)}`, import.meta.url));
       if (!response.ok) throw new Error('Logo unavailable');
       const svg = await response.text();
       if (token !== sizeRequest) return;
@@ -103,8 +105,14 @@ if (logo) {
   let eyeProgress = 0;
   const writingDuration = () => (data.inkEnd - data.route[0][3]) / speed;
   const revealAt = () => bitVariations[variation].touchdown + writingDuration() + .7;
+  let lastPaint = null;
   const draw = () => {
-    paint(elapsed, { eyeStyle, eyeProgress, hideBit: true });
+    const key = [elapsed, eyeStyle, eyeProgress, canvas.width, canvas.height].join(':');
+    // During B's fall and final leap the handwriting pixels do not change.
+    if (key !== lastPaint) {
+      paint(elapsed, { eyeStyle, eyeProgress, hideBit: true });
+      lastPaint = key;
+    }
     intro.paint(wall, revealAt(), variation, moveSpeed, moveStyle);
   };
   const eyeSelect = document.querySelector('#eye-style');
@@ -173,7 +181,7 @@ if (logo) {
   }
 
   Promise.all([
-    fetch(new URL(`./bit-clever-logo-white-${itSize}.svg`, import.meta.url)).then(response => {
+    fetch(new URL(`./${logoFile('white', itSize)}`, import.meta.url)).then(response => {
       if (!response.ok) throw new Error('Logo unavailable');
       return response.text();
     }),

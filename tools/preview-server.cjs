@@ -11,31 +11,6 @@ const server = http.createServer((req, res) => {
   let pathname;
   try { pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname); }
   catch { res.writeHead(400).end(); return; }
-  if (pathname === '/__preview/noise-defaults') {
-    const reply = (status, value) => {
-      res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
-      res.end(JSON.stringify(value));
-    };
-    if (req.method !== 'POST') { reply(405, {error: 'POST required'}); return; }
-    if (req.headers.origin !== `http://127.0.0.1:${port}` && req.headers.origin !== `http://localhost:${port}`) {
-      reply(403, {error: 'Save from the local preview only'}); return;
-    }
-    if (req.headers['content-type'] !== 'application/json') { reply(415, {error: 'JSON required'}); return; }
-    let body = '';
-    req.on('data', chunk => { body += chunk; if (body.length > 4096) req.destroy(); });
-    req.on('end', () => {
-      try {
-        const {preset, strength, size} = JSON.parse(body);
-        if (!Number.isInteger(preset) || preset < 0 || preset > 9 || !Number.isFinite(strength) || strength < 0 || strength > 4 || !Number.isFinite(size) || size < .25 || size > 4) {
-          reply(400, {error: 'Invalid noise settings'}); return;
-        }
-        const settings = {preset, strength, size, revision: new Date().toISOString()};
-        fs.writeFileSync(path.join(root, 'assets/noise-defaults.json'), JSON.stringify(settings, null, 2) + '\n');
-        reply(200, settings);
-      } catch { reply(400, {error: 'Unable to save noise settings'}); }
-    });
-    return;
-  }
   if (pathname === '/__preview/health') {
     res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
     res.end(JSON.stringify({ app: 'bit-clever-preview', root }));
@@ -65,8 +40,6 @@ const server = http.createServer((req, res) => {
 let pending;
 fs.watch(root, { recursive: true }, (event, name) => {
   if (!name || name.split(/[\\/]/).some(part => part.startsWith('.') || part === 'node_modules')) return;
-  // The save button shows its own success state; do not erase it with a reload.
-  if (name.replaceAll('\\', '/') === 'assets/noise-defaults.json') return;
   if (!/\.(html|css|js|json|svg|png|jpe?g|webp|woff2?)$/i.test(name)) return;
   clearTimeout(pending);
   pending = setTimeout(() => {

@@ -39,7 +39,7 @@ const fs = require('node:fs');
   const reveal=config.landings.rubber.touchdown+5/3+.7;
   for(const [key,p] of Object.entries(config.moves)){
    await page.selectOption('#bit-move-style',key,{force:true});
-   for(const [n,f] of [.13,.4,.65,.85].entries()){await step(reveal+p.duration*f);assert.equal(await page.locator('.falling-b').getAttribute('transform'),await page.locator('.b-occluder').getAttribute('transform'));assert.equal(await page.locator('.hidden-it').getAttribute('transform'),null);await snap('move',key,n)}
+   for(const [n,f] of [.13,.4,.65,.85].entries()){await step(reveal+p.duration*f);assert.ok(await page.evaluate(()=>document.querySelector('.hidden-it').compareDocumentPosition(document.querySelector('.falling-b')) & Node.DOCUMENT_POSITION_FOLLOWING));assert.equal(await page.locator('.hidden-it').getAttribute('transform'),null);await snap('move',key,n)}
    await step(reveal+p.duration+.02);assert.equal(await page.locator('.hero__brand').getAttribute('data-handwriting'),'complete');start+=reveal+p.duration+.02;
   }
   for(const key of Object.keys(config.eyes)){
@@ -51,6 +51,6 @@ const fs = require('node:fs');
   await page.reload();await page.waitForSelector('.hero__bit-intro');assert.equal(await page.locator('#bit-move-style').inputValue(),'glide');assert.equal(await page.locator('#eye-style').inputValue(),'wiggle');
   await page.setViewportSize({width:320,height:640});await page.locator('.settings summary').click();const panel=await page.locator('.settings-panel').boundingBox();assert.ok(panel.y>=0&&panel.y+panel.height<=640);
   const reduced=await browser.newPage({reducedMotion:'reduce'});await reduced.goto(process.env.PREVIEW_URL||'http://127.0.0.1:4175');await reduced.waitForSelector('.hero__bit-intro',{state:'attached'});assert.equal(await reduced.locator('.hero__brand').getAttribute('data-handwriting'),'complete');assert.equal(await reduced.locator('.hero__bit-intro').isVisible(),false);
-  assert.deepEqual(errors,[]);console.log('PASS: 30 presets, per-frame finite motion and settled endpoints, phase ordering, fixed it, mask tracking, persistence, mobile menu, reduced motion. 120 review frames saved.');
+  assert.deepEqual(errors,[]);console.log('PASS: 30 presets, per-frame finite motion and settled endpoints, phase ordering, fixed it, SVG occlusion order, persistence, mobile menu, reduced motion. 120 review frames saved.');
  } finally {await browser.close()}
 })().catch(e=>{console.error(e);process.exit(1)});
