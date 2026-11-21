@@ -164,23 +164,26 @@
       .quote-form__fields { grid-template-columns: 1fr; gap: 18px; }
     }
     .site-footer { border-radius: 24px; padding: clamp(36px, 5vw, 72px); background: #123433; color: #f4f7f2; font: 400 15px/1.6 Arial, sans-serif; }
-    .footer-columns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; padding-bottom: 56px; }
+    .footer-columns { display: grid; grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, 1fr)); gap: 40px; padding-bottom: 56px; }
     .site-footer h2 { margin: 0 0 20px; font-size: 17px; line-height: 1.4; font-weight: 600; }
     .footer-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; color: #d2dfda; }
     .footer-contact { display: grid; gap: 12px; margin-top: 28px; color: #d2dfda; }
     .footer-contact p { margin: 0; }
     .footer-icon-line { display: flex; align-items: center; gap: 12px; }
     .footer-icon-line svg { width: 20px; height: 20px; flex: none; }
-    .footer-bottom { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 24px; padding-top: 32px; border-top: 1px solid #f4f7f233; }
+    .footer-bottom { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 24px; padding-top: 32px; border-top: 1px solid #f4f7f233; }
     .footer-copyright { margin: 0; color: #d2dfda; font-size: 12px; }
-    .footer-logo { display: block; width: 190px; }
+    .footer-logo { display: block; width: 190px; max-width: 100%; }
     .footer-logo img { display: block; width: 100%; height: auto; }
     .footer-privacy { justify-self: end; color: #d2dfda; font-size: 13px; }
+    @media (max-width: 1000px) {
+      .footer-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
     @media (max-width: 700px) {
       .site-footer { padding: 36px 24px 28px; }
       .footer-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px 24px; padding-bottom: 36px; }
       .footer-bottom { grid-template-columns: 1fr; justify-items: center; gap: 20px; text-align: center; }
-      .footer-logo { grid-row: 1; width: 180px; }
+      .footer-logo { width: 180px; }
       .footer-privacy { justify-self: center; }
     }
     @media (max-width: 380px) {
@@ -286,6 +289,13 @@
   </main>
   <footer class="site-footer">
     <div class="footer-columns">
+      <div class="footer-brand">
+      <span class="footer-logo"><img src="./assets/bit-clever-logo-white.svg" width="456" height="130" alt="Bit Clever" loading="lazy" decoding="async"></span>
+        <div class="footer-contact">
+          <p class="footer-icon-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Address coming soon</span></p>
+          <p class="footer-icon-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 3 3 5-2.5 2a16 16 0 0 0 6.5 6.5l2-2.5 5 3v3c0 1-1 1.5-2 1.3C10 20 4 14 2.7 5 2.5 4 3 3 4 3h3Z"/></svg><span>Phone number coming soon</span></p>
+        </div>
+      </div>
       <section aria-labelledby="footer-services">
         <h2 id="footer-services">Services</h2>
         <ul class="footer-list"><li>Service 01</li><li>Service 02</li><li>Service 03</li></ul>
@@ -293,10 +303,6 @@
       <section aria-labelledby="footer-company">
         <h2 id="footer-company">Company</h2>
         <ul class="footer-list"><li>Company 01</li><li>Company 02</li><li>Company 03</li></ul>
-        <div class="footer-contact">
-          <p class="footer-icon-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Address coming soon</span></p>
-          <p class="footer-icon-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 3 3 5-2.5 2a16 16 0 0 0 6.5 6.5l2-2.5 5 3v3c0 1-1 1.5-2 1.3C10 20 4 14 2.7 5 2.5 4 3 3 4 3h3Z"/></svg><span>Phone number coming soon</span></p>
-        </div>
       </section>
       <section aria-labelledby="footer-social">
         <h2 id="footer-social">Social</h2>
@@ -309,7 +315,6 @@
     </div>
     <div class="footer-bottom">
       <p class="footer-copyright">&copy; 2026 Bit Clever. All rights reserved.</p>
-      <span class="footer-logo"><img src="./assets/bit-clever-logo-white.svg" width="456" height="130" alt="Bit Clever" loading="lazy" decoding="async"></span>
       <span class="footer-privacy">Privacy Policy</span>
     </div>
   </footer>
