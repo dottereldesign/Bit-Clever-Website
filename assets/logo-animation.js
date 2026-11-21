@@ -29,6 +29,8 @@ if (logo) {
     intro = createBitIntro(replay, svg);
     logo.src = `./assets/${logoFile('white', itSize)}`;
     document.querySelector('.site-logo img').src = `./assets/${logoFile('black', itSize)}`;
+    const footerLogo = document.querySelector('.footer-logo img');
+    if (footerLogo) footerLogo.src = logo.src;
   };
   itSelect.addEventListener('change', async () => {
     const token = ++sizeRequest;
