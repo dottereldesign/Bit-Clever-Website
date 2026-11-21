@@ -96,8 +96,10 @@
     .settings select { width: 100%; min-height: 40px; padding: 8px 10px; border: 0; border-radius: 8px; color: #fff; background: #ffffff0a; font: inherit; cursor: pointer; color-scheme: dark; }
     .settings option { background: #123433; }
     .settings :focus-visible { outline: 2px solid #99ace5; outline-offset: 2px; }
-    .site-header { height: var(--header-height); margin-bottom: 8px; padding: 0; display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 16px; background: #fff; font-family: Arial,sans-serif; }
-    .site-logo { display: block; width: 180px; max-width: 100%; text-decoration: none; }
+    .site-header { position: sticky; top: 0; z-index: 15; --compact-height: 56px; transition: height .2s ease, margin-bottom .2s ease, box-shadow .2s ease; height: var(--header-height); margin-bottom: 8px; padding: 0; display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 16px; background: #fff; font-family: Arial,sans-serif; }
+    .site-logo { display: block; transition: width .2s ease; width: 180px; max-width: 100%; text-decoration: none; }
+    .site-header.is-compact { height: var(--compact-height); margin-bottom: calc(var(--header-height) - var(--compact-height) + 8px); box-shadow: 0 6px 16px #12343312; }
+    .site-header.is-compact .site-logo { width: 150px; }
     .site-logo img { display: block; width: 100%; height: auto; }
     .header-nav { display: flex; align-items: center; justify-content: center; gap: 26px; }
     .header-nav a { color: #161616; font: 500 14px/1.4 Arial,sans-serif; text-decoration: none; white-space: nowrap; }
@@ -111,11 +113,14 @@
     @media (max-width: 1050px) {
       html { --header-height: 112px; }
       .site-header { grid-template-columns: minmax(0,1fr) auto; grid-template-rows: 64px 32px; gap: 8px 16px; }
+      .site-header { --compact-height: 84px; }
+      .site-header.is-compact { grid-template-rows: 44px 28px; row-gap: 4px; }
       .header-actions { grid-column: 2; grid-row: 1; }
       .header-nav { grid-column: 1 / -1; grid-row: 2; }
     }
     @media (max-width: 480px) {
       .site-logo { width: 110px; }
+      .site-header.is-compact .site-logo { width: 94px; }
       .site-header { column-gap: 8px; }
       .header-actions { gap: 12px; }
       .call-cta, .quote-cta { font-size: 11px; }
@@ -180,6 +185,9 @@
     }
     @media (max-width: 380px) {
       .footer-columns { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .site-header, .site-logo { transition: none; }
     }
   </style>
   <script type="module" src="./assets/hero-background.js"></script>
@@ -284,6 +292,21 @@
   </details>
   <script type="module">
     document.querySelector('.quote-form').addEventListener('submit', event => event.preventDefault());
+    const header = document.querySelector('.site-header');
+    let compact = false, scrollFrame = 0;
+    const updateHeader = () => {
+      scrollFrame = 0;
+      const next = compact ? window.scrollY > 16 : window.scrollY > 64;
+      if (next !== compact) {
+        compact = next;
+        header.classList.toggle('is-compact', compact);
+      }
+    };
+    window.addEventListener('scroll', () => {
+      if (!scrollFrame) scrollFrame = requestAnimationFrame(updateHeader);
+    }, { passive: true });
+    window.addEventListener('pageshow', updateHeader);
+    updateHeader();
     const menu = document.querySelector('.settings');
     document.addEventListener('pointerdown', event => { if (!menu.contains(event.target)) menu.open = false; });
     document.addEventListener('keydown', event => { if (event.key === 'Escape' && menu.open) { menu.open = false; menu.querySelector('summary').focus(); } });
