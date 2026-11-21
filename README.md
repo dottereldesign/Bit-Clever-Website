@@ -156,3 +156,10 @@ Lighthouse 13.6.0 requires Node 22.19 or newer. This audit used an isolated Node
 Node settings or production dependencies were changed. The Playwright checks use
 `PLAYWRIGHT_MODULE` to resolve an existing install, or the `playwright` package.
 The final scores are lab results, not field Core Web Vitals.
+
+## Typography
+
+All interface text uses self-hosted Inter (variable weight 100–900). The Latin
+subset includes macrons, extended Latin characters, and punctuation. Its SIL Open
+Font License is included in `assets/fonts/OFL.txt`. Source: https://rsms.me/inter/.
+The SVG logos retain their custom lettering.
