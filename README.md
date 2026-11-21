@@ -163,3 +163,11 @@ All interface text uses self-hosted Inter (variable weight 100–900). The Latin
 subset includes macrons, extended Latin characters, and punctuation. Its SIL Open
 Font License is included in `assets/fonts/OFL.txt`. Source: https://rsms.me/inter/.
 The SVG logos retain their custom lettering.
+
+## Pages
+
+`services.html`, `pricing.html`, `portfolio.html`, `about.html`, and `contact.html`
+are static heading-only pages with the shared header and footer. All pages use
+`assets/site.css` and `assets/site.js`. Request a Quote returns to the homepage
+form with smooth scrolling, respecting reduced-motion preferences. Relative URLs
+work both locally and under the GitHub Pages repository path.
