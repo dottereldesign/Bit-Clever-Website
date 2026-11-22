@@ -90,7 +90,7 @@
     .settings { position: fixed; right: 8px; bottom: 8px; z-index: 20; font: 14px var(--font-sans); }
     .settings summary { list-style: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid #ffffff55; color: white; background: #123433ed; cursor: pointer; }
     .settings summary::-webkit-details-marker { display: none; }
-    .settings-panel { max-height: calc(100dvh - 80px); overflow-y: auto; position: absolute; right: 0; bottom: 52px; width: 220px; max-width: calc(100vw - 16px); padding: 8px; display: grid; gap: 4px; border: 1px solid #ffffff25; border-radius: 16px; background: #123433f5; box-shadow: 0 8px 24px #001b1920; }
+    .settings-panel { max-height: calc(100dvh - 80px); overflow-y: auto; position: absolute; right: 0; bottom: 52px; width: 260px; max-width: calc(100vw - 16px); padding: 8px; display: grid; gap: 4px; border: 1px solid #ffffff25; border-radius: 16px; background: #123433f5; box-shadow: 0 8px 24px #001b1920; }
     .settings select { width: 100%; min-height: 40px; padding: 8px 10px; border: 0; border-radius: 8px; color: #fff; background: #ffffff0a; font: inherit; cursor: pointer; color-scheme: dark; }
     .settings option { background: #123433; }
     .settings :focus-visible { outline: 2px solid #99ace5; outline-offset: 2px; }
@@ -247,3 +247,9 @@
     .introduction { max-width: 1040px; margin: 0 auto; padding: clamp(72px, 9vw, 136px) clamp(20px, 5vw, 64px) 0; text-align: center; color: #123433; }
     .introduction h2 { margin: 0 0 24px; font-size: clamp(32px, 4.2vw, 56px); font-weight: 600; letter-spacing: -.045em; line-height: 1.12; text-wrap: balance; }
     .introduction__copy { max-width: 740px; margin: 0 auto; font-size: clamp(18px, 2vw, 24px); line-height: 1.6; text-wrap: pretty; }
+
+    .settings-home, .settings-submenu { display: grid; gap: 4px; }
+    .settings-panel [hidden] { display: none; }
+    .settings-nav, .settings-back { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 10px 12px; border: 0; border-radius: 8px; color: #fff; background: transparent; text-align: left; font: inherit; cursor: pointer; }
+    .settings-nav:hover, .settings-back:hover { background: #ffffff12; }
+    .settings-nav span { font-size: 22px; }

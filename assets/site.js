@@ -40,7 +40,32 @@
     updateHeader();
     const menu = document.querySelector('.settings');
     document.addEventListener('pointerdown', event => { if (menu && !menu.contains(event.target)) menu.open = false; });
-    document.addEventListener('keydown', event => { if (event.key === 'Escape' && menu?.open) { menu.open = false; menu.querySelector('summary').focus(); } });
+    let activeSettingsButton = null;
+    const settingsHome = (restoreFocus = false) => {
+      if (!menu) return;
+      menu.querySelector('.settings-home').hidden = false;
+      menu.querySelectorAll('.settings-submenu').forEach(panel => { panel.hidden = true; });
+      menu.querySelectorAll('[data-settings-target]').forEach(button => button.setAttribute('aria-expanded', 'false'));
+      if (restoreFocus) activeSettingsButton?.focus();
+      activeSettingsButton = null;
+    };
+    menu?.addEventListener('click', event => {
+      const button = event.target.closest('[data-settings-target]');
+      if (button) {
+        activeSettingsButton = button;
+        menu.querySelector('.settings-home').hidden = true;
+        const panel = document.getElementById(button.dataset.settingsTarget);
+        panel.hidden = false;
+        button.setAttribute('aria-expanded', 'true');
+        panel.querySelector('.settings-back').focus();
+      } else if (event.target.closest('.settings-back')) settingsHome(true);
+    });
+    menu?.addEventListener('toggle', () => { if (!menu.open) settingsHome(); });
+    document.addEventListener('keydown', event => {
+      if (event.key !== 'Escape' || !menu?.open) return;
+      if (activeSettingsButton) settingsHome(true);
+      else { menu.open = false; menu.querySelector('summary').focus(); }
+    });
 
     // Real anchors work across pages, with JavaScript disabled, and in new tabs.
     // Only enhance same-page clicks; never replace a cross-page URL with a query.

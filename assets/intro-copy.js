@@ -2,102 +2,102 @@ const variations = [
   [
     "A bit more you",
     "Hi, I’m Jamie Wilson.",
-    "An independent designer and developer making websites that feel a bit more you. Thoughtful design, carefully built, with the little details that make people want to stay."
+    "I make websites for people who care about what they do. We’ll work out what makes your business yours, then give it a home online you’re excited to share."
   ],
   [
     "Good first impression",
-    "Your next first impression starts here.",
-    "I’m Jamie Wilson, an independent designer and developer. I turn what makes your business worth knowing into a website worth exploring."
+    "Let’s make that first visit count.",
+    "I’m Jamie. I want someone opening your website to get a feel for your business and a reason to keep looking. That’s where I start."
   ],
   [
     "One person, both sides",
-    "Hi, I’m Jamie. I design it. I build it.",
-    "I’m an independent designer and developer, bringing the look, the feel and the workings of your website together. One person to talk to, from the first idea to the final detail."
+    "Hi, I’m Jamie. You’ll be working with me.",
+    "We’ll talk through your ideas, then I’ll design and build your website. If something doesn’t feel right along the way, we can work it out together."
   ],
   [
     "Quiet confidence",
-    "Good websites make you feel something.",
-    "Confidence. Curiosity. That little ‘this is the one’. I’m Jamie Wilson, an independent designer and developer, and that’s what I aim to build into your next website."
+    "Make yourself at home. Have a look around.",
+    "I’m Jamie, and this is Bit Clever. I build websites with the same invitation in mind: come in, get to know the business, see if it feels right for you."
   ],
   [
     "The business behind it",
-    "You’ve put yourself into your business. Let’s show it.",
-    "I’m Jamie Wilson, an independent designer and developer. I make websites with room for your personality and a clear path for the people who need what you do."
+    "Your business has a personality.",
+    "I’m Jamie. I’d like to help it come through online, so people get a sense of who they’re dealing with before they ever get in touch."
   ],
   [
     "Small details",
-    "A little detail can make a big difference.",
-    "I’m Jamie Wilson, an independent designer and developer. From the first headline to the last click, I care about the things that make your website feel considered."
+    "Hi, I’m Jamie. I care how it feels to use.",
+    "A page that reads well on a phone. A menu that’s easy to find. I spend time on those things because they’re part of how people experience your business."
   ],
   [
     "Invitation",
-    "Got something good going? Let’s give it a website.",
-    "I’m Jamie Wilson, an independent designer and developer. Bring your ideas, your questions and the bits you haven’t figured out yet. We’ll start there."
+    "Got an idea you keep coming back to?",
+    "I’m Jamie. If there’s a business you want to get online, or a website you’ve been meaning to rethink, I’d love to hear what you have in mind."
   ],
   [
     "Personality with purpose",
-    "A bit of personality. A lot of thought.",
-    "I’m Jamie Wilson, the independent designer and developer behind Bit Clever. I make websites that express who you are and help people find their next step."
+    "A website with a bit of you in it.",
+    "I’m Jamie, the person behind Bit Clever. Let’s make something that sounds like your business and feels like somewhere your customers would want to spend time."
   ],
   [
     "Curiosity",
-    "The best part of your business might be hard to put into words.",
-    "I’m Jamie Wilson, an independent designer and developer. Let’s find it, give it shape, and make it the reason someone keeps scrolling."
+    "What do you wish people knew about your business?",
+    "I’m Jamie. That’s a good place to start a website. We can give the things you care about room to come through, and make it easy for people to find out more."
   ],
   [
     "Local and personal",
-    "Hi, I’m Jamie. The person behind Bit Clever.",
-    "I’m an independent designer and developer based in New Zealand. I bring design and code together to give your business a place online that feels like its own."
+    "Hi, I’m Jamie, from Bit Clever.",
+    "I’m based in New Zealand, making websites with people who have something they want to put out into the world. I’d like to hear about yours."
   ],
   [
     "Humanizer: personal",
-    "Hi, I’m Jamie Wilson.",
-    "I’m an independent designer and developer. I make websites that feel like the business behind them, and spend time on the details people notice as they explore."
+    "Hi, I’m Jamie. I make websites.",
+    "Tell me about your business and what you want people to do when they visit. We’ll use that to work out what belongs on the page."
   ],
   [
     "Humanizer: first visit",
-    "Let’s give people a reason to look around.",
-    "I’m Jamie Wilson, an independent designer and developer. Your website is a chance to show people what you do and why they might want to work with you. I can help you put that into shape."
+    "Give people something to stop for.",
+    "I’m Jamie. When someone visits your website, I want them to find something that interests them enough to look a little further. Let’s work out what that is for your business."
   ],
   [
     "Humanizer: direct contact",
-    "Hi, I’m Jamie. We’ll work together.",
-    "I’m the independent designer and developer behind Bit Clever. When we talk about your website, you’re talking to the person who’ll design and build it."
+    "You can just call me Jamie.",
+    "I’m the person you’ll talk to about your website, and the one who’ll make it. We can go from a rough idea to something you can open in your browser and try."
   ],
   [
     "Humanizer: customer view",
-    "A website you’d want to spend time on.",
-    "I’m Jamie Wilson, an independent designer and developer. I want your visitors to enjoy looking around, understand what you offer and feel comfortable getting in touch."
+    "Would you enjoy using your own website?",
+    "I’m Jamie. I think that’s a useful question. I want to make you a site that’s easy to find your way around and feels right for the people using it."
   ],
   [
     "Humanizer: your business",
-    "You know your business. I’d like to get to know it.",
-    "I’m Jamie Wilson, an independent designer and developer. We’ll work out what your website needs to say, then I’ll design and build a place for it."
+    "Tell me about the business you’re building.",
+    "I’m Jamie. I’ll ask questions, get to know what you do, and work with you on a website that helps people understand it."
   ],
   [
     "Humanizer: details",
     "Hi, I’m Jamie. I get quite into the details.",
-    "I’m an independent designer and developer. How a page reads on a phone, how a button feels, whether an animation moves just right. Those things matter to me when I’m building a website."
+    "I’ll spend time getting a little animation to move just right. I care just as much about whether someone can read the page on their phone and find how to contact you."
   ],
   [
     "Humanizer: early ideas",
-    "You can start with a rough idea.",
-    "I’m Jamie Wilson, an independent designer and developer. If you know your business needs a website but haven’t worked out what goes on it, that’s something we can figure out together."
+    "A rough idea is enough to start.",
+    "I’m Jamie. You can come to me with a few notes and a website you like. We’ll work through what you need and figure out the rest together."
   ],
   [
     "Humanizer: a bit clever",
     "Hi, I’m Jamie, the person behind Bit Clever.",
-    "I’m an independent designer and developer. I like websites with some personality, where people can still find what they came for. That’s what I want to make for your business."
+    "I like a website with a little personality. Something that makes you smile as you use it, while still making it easy to get where you’re going."
   ],
   [
     "Humanizer: finding words",
-    "How do you explain what you do?",
-    "I’m Jamie Wilson, an independent designer and developer. If it’s easier to explain your business in a conversation than on a website, let’s have that conversation first."
+    "It might be easier to talk it through.",
+    "I’m Jamie. If explaining your business on a blank page feels awkward, start by telling me about it. We can work out what your website needs to say from there."
   ],
   [
     "Humanizer: New Zealand",
     "Hi, I’m Jamie Wilson.",
-    "I’m an independent designer and developer based in New Zealand. I work on both sides of your website, from how it looks to how it works, so we can carry an idea all the way through."
+    "I make websites here in New Zealand. If you’ve got something in mind, I can work on the design and build with you, right through to the little finishing touches."
   ]
 ];
 const select = document.querySelector('#intro-copy');
