@@ -243,3 +243,7 @@
     .testimonial-card figcaption strong { font-weight: 600; }
     .testimonial-card figcaption span { color: #52665d; }
     @media (max-width: 767px) { .testimonials__grid { grid-template-columns: 1fr; } }
+
+    .introduction { max-width: 1040px; margin: 0 auto; padding: clamp(72px, 9vw, 136px) clamp(20px, 5vw, 64px) 0; text-align: center; color: #123433; }
+    .introduction h2 { margin: 0 0 24px; font-size: clamp(32px, 4.2vw, 56px); font-weight: 600; letter-spacing: -.045em; line-height: 1.12; text-wrap: balance; }
+    .introduction__copy { max-width: 740px; margin: 0 auto; font-size: clamp(18px, 2vw, 24px); line-height: 1.6; text-wrap: pretty; }

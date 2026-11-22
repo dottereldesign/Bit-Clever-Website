@@ -51,6 +51,10 @@
     </button>
     <p class="hero__message"><span class="coming-soon">Coming soon</span></p>
   </section>
+  <section class="introduction" aria-labelledby="introduction-title">
+    <h2 id="introduction-title">Hi, I’m Jamie Wilson.</h2>
+    <p class="introduction__copy">An independent designer and developer making websites that feel a bit more you. Thoughtful design, carefully built, with the little details that make people want to stay.</p>
+  </section>
   <section class="recent-work" aria-labelledby="recent-work-title">
     <h2 id="recent-work-title">Recent <span>work.</span></h2>
     <div class="recent-work__grid">
@@ -157,6 +161,7 @@
   <details class="settings">
     <summary aria-label="Appearance settings" title="Appearance settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="#123433"/><circle cx="15" cy="17" r="3" fill="#123433"/></svg></summary>
     <div class="settings-panel">
+      <select id="intro-copy" aria-label="Introduction copy"></select>
       <select id="it-size" aria-label="it size"></select>
       <select id="bit-style" aria-label="Bit entrance"></select>
       <select id="bit-move-style" aria-label="B move style"></select>
@@ -168,5 +173,6 @@
     </div>
   </details>
   <script type="module" src="./assets/site.js"></script>
+  <script type="module" src="./assets/intro-copy.js"></script>
 </body>
 </html>
