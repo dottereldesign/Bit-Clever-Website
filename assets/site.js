@@ -45,7 +45,7 @@
     // Real anchors work across pages, with JavaScript disabled, and in new tabs.
     // Only enhance same-page clicks; never replace a cross-page URL with a query.
     document.addEventListener('click', event => {
-      const link = event.target.closest('a.quote-cta');
+      const link = event.target.closest('a.quote-cta[href="./#contact"]');
       if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       if (mobileMenu.open) closeMobileMenu();
       const target = document.querySelector('#contact');
