@@ -42,32 +42,23 @@
     document.addEventListener('pointerdown', event => { if (menu && !menu.contains(event.target)) menu.open = false; });
     document.addEventListener('keydown', event => { if (event.key === 'Escape' && menu?.open) { menu.open = false; menu.querySelector('summary').focus(); } });
 
-    // Keep normal anchor URLs, with a smooth arrival when coming from a subpage.
+    // Real anchors work across pages, with JavaScript disabled, and in new tabs.
+    // Only enhance same-page clicks; never replace a cross-page URL with a query.
     document.addEventListener('click', event => {
       const link = event.target.closest('a.quote-cta');
       if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       if (mobileMenu.open) closeMobileMenu();
       const target = document.querySelector('#contact');
-      if (target) {
-        event.preventDefault();
-        history.replaceState(null, '', '#contact');
-        target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
-      } else {
-        event.preventDefault();
-        const destination = new URL(link.href);
-        destination.hash = '';
-        destination.searchParams.set('quote', '1');
-        location.assign(destination.href);
-      }
+      if (!target) return;
+      event.preventDefault();
+      if (location.hash !== '#contact') history.pushState(null, '', '#contact');
+      target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
     });
-    if (new URLSearchParams(location.search).get('quote') === '1' && document.querySelector('#contact')) {
-      const arrive = () => {
-        const url = new URL(location.href);
-        url.searchParams.delete('quote');
-        url.hash = 'contact';
-        history.replaceState(null, '', url);
-        requestAnimationFrame(() => document.querySelector('#contact').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }));
-      };
-      if (document.readyState === 'complete') arrive();
-      else window.addEventListener('load', arrive, { once: true });
+    // Support old bookmarked quote URLs without waiting for load/animation assets.
+    const legacyURL = new URL(location.href);
+    if (legacyURL.searchParams.get('quote') === '1') {
+      legacyURL.searchParams.delete('quote');
+      legacyURL.hash = 'contact';
+      history.replaceState(null, '', legacyURL);
+      document.querySelector('#contact')?.scrollIntoView({ behavior: 'instant' });
     }

@@ -74,13 +74,15 @@ if (context) {
       selected = saved.preset; strength = variations[selected].strength; grainSize = variations[selected].size;
     }
   } catch {}
-  variations.forEach((variation, index) => select.add(new Option(variation.name, index)));
-  select.value = selected;
-  select.addEventListener('change', () => {
-    selected = Number(select.value);
-    strength = variations[selected].strength; grainSize = variations[selected].size;
-    try { localStorage.setItem('hero-noise-tuning', JSON.stringify({preset: selected, strength, size: grainSize, revision: defaults.revision})); } catch {}
-    scheduleRender();
-  });
+  if (select) {
+    variations.forEach((variation, index) => select.add(new Option(variation.name, index)));
+    select.value = selected;
+    select.addEventListener('change', () => {
+      selected = Number(select.value);
+      strength = variations[selected].strength; grainSize = variations[selected].size;
+      try { localStorage.setItem('hero-noise-tuning', JSON.stringify({preset: selected, strength, size: grainSize, revision: defaults.revision})); } catch {}
+      scheduleRender();
+    });
+  }
   scheduleRender();
 }
