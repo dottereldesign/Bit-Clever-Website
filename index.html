@@ -51,9 +51,9 @@
     </button>
     <p class="hero__message"><span class="coming-soon">Coming soon</span></p>
   </section>
-  <section class="introduction" aria-labelledby="introduction-title">
-    <h2 id="introduction-title">Hi, I’m Jamie Wilson.</h2>
-    <p class="introduction__copy">I make websites for people who care about what they do. We’ll work out what makes your business yours, then give it a home online you’re excited to share.</p>
+  <section class="introduction" id="introduction" aria-labelledby="introduction-title">
+    <h2 id="introduction-title">Someone just sent me your name.</h2>
+    <p class="introduction__copy">That’s how a lot of good work starts. I make websites for the moment after the recommendation, when someone looks you up and decides whether to call.</p>
   </section>
   <section class="recent-work" aria-labelledby="recent-work-title">
     <h2 id="recent-work-title">Recent <span>work.</span></h2>
@@ -168,6 +168,10 @@
       <div id="settings-introduction" class="settings-submenu" hidden>
         <button type="button" class="settings-back" aria-label="Back to settings">‹ Back</button>
         <select id="intro-copy" aria-label="Introduction copy"></select>
+        <div class="intro-controls">
+          <button type="button" class="settings-nav" id="intro-previous">‹ Previous</button>
+          <button type="button" class="settings-nav" id="intro-next">Next ›</button>
+        </div>
       </div>
       <div id="settings-hero" class="settings-submenu" hidden>
         <button type="button" class="settings-back" aria-label="Back to settings">‹ Back</button>

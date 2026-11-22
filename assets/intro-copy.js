@@ -1,4 +1,6 @@
-const variations = [
+import { introductionGroups } from './intro-alternatives.js';
+
+const earlierIntroductions = [
   [
     "A bit more you",
     "Hi, I’m Jamie Wilson.",
@@ -103,19 +105,48 @@ const variations = [
 const select = document.querySelector('#intro-copy');
 const heading = document.querySelector('#introduction-title');
 const copy = document.querySelector('.introduction__copy');
-variations.forEach(([label], index) => select.add(new Option(`${index + 1}. ${label}`, String(index))));
-const apply = index => {
-  const [, title, text] = variations[index];
+const variations = [];
+function addGroup(label, entries) {
+  const group = document.createElement('optgroup');
+  group.label = label;
+  for (const [optionLabel, title, text] of entries) {
+    const index = variations.length;
+    variations.push({ title, text });
+    group.append(new Option(`${index + 1}. ${optionLabel}`, String(index)));
+  }
+  select.append(group);
+}
+
+// Earlier options keep their original values for visitors with saved choices.
+addGroup('Original introductions', earlierIntroductions);
+for (const { label, entries } of introductionGroups) {
+  addGroup(label, entries.map(([title, text]) => [title, title, text]));
+}
+
+function apply(index) {
+  const { title, text } = variations[index];
   select.value = String(index);
   heading.textContent = title;
   copy.textContent = text;
-};
+}
+
+let startingIndex = earlierIntroductions.length;
 try {
-  const saved = Number(localStorage.getItem('intro-copy'));
-  if (Number.isInteger(saved) && variations[saved]) apply(saved);
+  const saved = localStorage.getItem('intro-copy');
+  if (saved !== null && variations[Number(saved)] && saved === String(Number(saved))) {
+    startingIndex = Number(saved);
+  }
 } catch {}
-select.addEventListener('change', () => {
-  const index = Number(select.value);
+apply(startingIndex);
+
+function choose(index) {
   apply(index);
   try { localStorage.setItem('intro-copy', String(index)); } catch {}
-});
+}
+
+select.addEventListener('change', () => choose(Number(select.value)));
+function step(direction) {
+  choose((Number(select.value) + direction + variations.length) % variations.length);
+}
+document.querySelector('#intro-previous').addEventListener('click', () => step(-1));
+document.querySelector('#intro-next').addEventListener('click', () => step(1));

@@ -253,3 +253,5 @@
     .settings-nav, .settings-back { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 10px 12px; border: 0; border-radius: 8px; color: #fff; background: transparent; text-align: left; font: inherit; cursor: pointer; }
     .settings-nav:hover, .settings-back:hover { background: #ffffff12; }
     .settings-nav span { font-size: 22px; }
+    .intro-controls { display: flex; justify-content: space-between; }
+    #intro-copy { min-width: 0; }
